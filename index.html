@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
+  <title>以猫还猫 · 个人博客</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Georgia','Noto Serif SC','Songti SC','PingFang SC',serif;
+      background:#f5efe0;color:#4a3f35;line-height:1.7;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:#6b7b3c;text-decoration:none}
+    a:hover{color:#4a5a2a}
+
+    /* ===== Header ===== */
+    header{
+      background:linear-gradient(145deg,#3f4e22,#5d6f38 50%,#6b7b3c);
+      color:#f5efe0;padding:2.2rem 1.2rem 1.8rem;text-align:center;
+      position:relative;overflow:hidden;
+      box-shadow:0 4px 20px rgba(74,90,42,.25);
+    }
+    header h1{
+      font-size:clamp(1.6rem,6vw,2.6rem);font-weight:700;
+      letter-spacing:.08em;text-shadow:0 2px 8px rgba(0,0,0,.25);
+    }
+    header .subtitle{
+      margin-top:.6rem;font-size:clamp(.78rem,2.5vw,.92rem);
+      letter-spacing:.08em;line-height:1.75;opacity:.88;
+    }
+    header .subtitle small{
+      display:block;margin-top:.15rem;
+      font-size:.82em;opacity:.7;
+    }
+    header .header-frame{
+      display:inline-block;
+      border:1.5px solid rgba(255,255,255,.2);
+      border-radius:14px;
+      padding:0.9rem 2rem 1.1rem;
+      backdrop-filter:blur(6px);
+      background:rgba(255,255,255,.07);
+      box-shadow:0 0 40px rgba(255,255,255,.06),inset 0 0 30px rgba(255,255,255,.04);
+    }
+    header .email{
+      display:inline-block;margin-top:.7rem;
+      padding:.3rem 1rem;border:1px solid rgba(245,239,224,.3);
+      border-radius:20px;font-size:clamp(.72rem,2vw,.82rem);
+      color:#f5efe0;opacity:.75;transition:all .3s;
+    }
+    header .email:hover{opacity:1;background:rgba(245,239,224,.1);text-decoration:none}
+
+    /* ===== Hamburger (top-left fixed) ===== */
+    .menu-btn{
+      position:fixed;top:16px;left:16px;z-index:999;
+      width:40px;height:40px;
+      background:rgba(63,78,34,.85);
+      backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+      border:1px solid rgba(245,239,224,.25);
+      border-radius:10px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+      cursor:pointer;transition:background .3s;
+      box-shadow:0 2px 12px rgba(0,0,0,.15);
+    }
+    .menu-btn:hover{background:rgba(63,78,34,1)}
+    .menu-btn span{
+      display:block;width:20px;height:2.5px;
+      background:#f5efe0;border-radius:2px;
+      transition:all .3s;
+    }
+    .menu-btn.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+    .menu-btn.open span:nth-child(2){opacity:0}
+    .menu-btn.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+    /* ===== Menu overlay ===== */
+    .menu-overlay{
+      position:fixed;top:0;left:0;right:0;bottom:0;
+      background:rgba(63,78,34,.4);
+      z-index:800;opacity:0;visibility:hidden;
+      transition:all .3s;
+    }
+    .menu-overlay.open{opacity:1;visibility:visible}
+
+    .menu-panel{
+      position:fixed;top:0;left:0;bottom:0;
+      width:clamp(260px,65vw,360px);
+      background:#f5efe0;z-index:900;
+      box-shadow:4px 0 30px rgba(0,0,0,.15);
+      transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+      overflow-y:auto;
+      display:flex;flex-direction:column;
+    }
+    .menu-panel.open{transform:translateX(0)}
+
+    .menu-header{
+      padding:1.2rem 1.2rem .8rem;
+      border-bottom:2px solid #e4d8c0;
+      text-align:center;
+    }
+    .menu-header .brand{font-weight:700;color:#4a5a2a;font-size:1.1rem;letter-spacing:.05em}
+    .menu-header .brand-sub{font-size:.75rem;color:#ab9c82;margin-top:2px}
+
+    .menu-list{flex:1;padding:.5rem 0;overflow-y:auto}
+    .menu-section{margin-bottom:.3rem}
+
+    .menu-top{
+      display:flex;align-items:center;justify-content:space-between;
+      width:100%;padding:.85rem 1.2rem;
+      background:none;border:none;font-size:.95rem;font-family:inherit;
+      color:#4a3f35;cursor:pointer;text-align:left;
+      transition:background .2s;font-weight:600;
+      letter-spacing:.03em;
+    }
+    .menu-top:hover{background:#e4d8c0}
+    .menu-top .arr{
+      font-size:.55rem;transition:transform .3s;color:#8a7a62;
+    }
+    .menu-top .arr.open{transform:rotate(180deg)}
+
+    .menu-top.direct{
+      justify-content:flex-start;gap:8px;
+    }
+    .menu-top.direct:hover{background:#e4d8c0}
+
+    .menu-sub,.menu-sub2{
+      max-height:0;overflow:hidden;transition:max-height .35s ease;
+      background:#ede3d0;
+    }
+    .menu-sub.open,.menu-sub2.open{max-height:300px}
+
+    .menu-sub-item,.menu-sub2-item{
+      display:flex;align-items:center;gap:8px;
+      width:100%;padding:.65rem 1.2rem .65rem 2.2rem;
+      background:none;border:none;font-size:.88rem;font-family:inherit;
+      color:#5a4f40;cursor:pointer;text-align:left;
+      transition:background .2s;
+    }
+    .menu-sub-item:hover,.menu-sub2-item:hover{background:#dcccb0}
+
+    .menu-sub2-item{padding-left:3.2rem;font-size:.84rem;color:#6a5f50}
+
+    .menu-sub-toggle{
+      display:flex;align-items:center;justify-content:space-between;
+      width:100%;padding:.65rem 1.2rem .65rem 2.2rem;
+      background:none;border:none;font-size:.88rem;font-family:inherit;
+      color:#5a4f40;cursor:pointer;text-align:left;
+      transition:background .2s;font-weight:500;
+    }
+    .menu-sub-toggle:hover{background:#dcccb0}
+    .menu-sub-toggle .arr{font-size:.5rem;transition:transform .3s;color:#8a7a62}
+    .menu-sub-toggle .arr.open{transform:rotate(180deg)}
+
+    .menu-footer{
+      padding:.8rem 1.2rem;border-top:1px solid #e4d8c0;
+      font-size:.75rem;color:#ab9c82;text-align:center;
+    }
+
+    /* ===== Content panels ===== */
+    .content-area{background:#f5efe0;min-height:calc(100vh - 200px)}
+    .panel{
+      display:none;padding:2rem 1.2rem 3rem;
+      max-width:800px;margin:0 auto;animation:fadeUp .35s ease;
+    }
+    .panel.active{display:block}
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    .panel-title{
+      text-align:center;font-size:clamp(.92rem,2.8vw,1.1rem);
+      color:#8a7a62;letter-spacing:.08em;margin-bottom:1.6rem;
+    }
+    .panel-title::before,.panel-title::after{content:'—';color:#cbb99a;margin:0 .4rem}
+
+    /* ===== Cards ===== */
+    .card{
+      background:#faf6ed;border:1px solid #e4d8c0;
+      border-radius:14px;padding:1.5rem;margin-bottom:1.2rem;
+      transition:box-shadow .3s,transform .2s;
+    }
+    .card:hover{box-shadow:0 4px 16px rgba(74,90,42,.1);transform:translateY(-2px)}
+    .card .date{font-size:.76rem;color:#ab9c82;letter-spacing:.03em}
+    .card h3{
+      margin:.3rem 0 .5rem;font-size:clamp(1rem,2.8vw,1.15rem);color:#4a5a2a;
+    }
+    .card .desc{color:#6a5f50;font-size:.88rem;line-height:1.75}
+    .card .desc p{margin-bottom:.35rem}
+    .card .tags{
+      display:flex;flex-wrap:wrap;gap:5px;margin:.5rem 0 .1rem;
+    }
+    .card .tags span{
+      padding:.08rem .5rem;background:#e4d8c0;border-radius:10px;
+      font-size:.7rem;color:#6a5f50;
+    }
+    .card .dl-row{
+      display:flex;flex-wrap:wrap;gap:8px;margin-top:.6rem;
+    }
+    .card .dl-btn{
+      display:inline-flex;align-items:center;gap:4px;
+      padding:.4rem 1rem;background:#6b7b3c;color:#f5efe0;
+      border-radius:20px;font-size:.8rem;font-family:inherit;
+      transition:background .25s,transform .2s;
+    }
+    .card .dl-btn:hover{background:#4a5a2a;transform:translateY(-1px);text-decoration:none}
+
+    /* ===== Password Modal ===== */
+    .pw-overlay{
+      position:fixed;top:0;left:0;right:0;bottom:0;
+      background:rgba(63,78,34,.5);z-index:9999;
+      display:none;align-items:center;justify-content:center;
+    }
+    .pw-overlay.open{display:flex}
+    .pw-box{
+      background:#faf6ed;border:2px solid #6b7b3c;
+      border-radius:16px;padding:2rem;width:clamp(280px,80vw,380px);
+      text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.2);
+      animation:fadeUp .3s ease;
+    }
+    .pw-box h3{color:#4a5a2a;margin-bottom:.4rem;font-size:1.1rem}
+    .pw-box p{color:#6a5f50;font-size:.82rem;margin-bottom:1rem}
+    .pw-box input{
+      width:100%;padding:.6rem .8rem;border:1px solid #d4c4a8;
+      border-radius:8px;font-size:.95rem;font-family:inherit;
+      background:#f5efe0;color:#4a3f35;outline:none;
+      transition:border-color .25s;
+    }
+    .pw-box input:focus{border-color:#6b7b3c}
+    .pw-box .pw-err{color:#b34a4a;font-size:.8rem;margin-top:.5rem;display:none}
+    .pw-box .pw-row{display:flex;gap:8px;margin-top:.8rem}
+    .pw-box .pw-btn{
+      flex:1;padding:.5rem;border:none;border-radius:8px;
+      font-size:.85rem;font-family:inherit;cursor:pointer;
+      transition:background .25s;
+    }
+    .pw-box .pw-btn.ok{background:#6b7b3c;color:#f5efe0}
+    .pw-box .pw-btn.ok:hover{background:#4a5a2a}
+    .pw-box .pw-btn.no{background:#e4d8c0;color:#4a3f35}
+    .pw-box .pw-btn.no:hover{background:#d4c4a8}
+
+    /* ===== Entry Gate (全页密码) ===== */
+    .gate-overlay{
+      position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;
+      background:rgba(50,45,35,.7);
+      backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+      display:flex;align-items:center;justify-content:center;
+      transition:opacity .6s ease,visibility .6s ease;
+    }
+    .gate-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+    .gate-box{
+      background:linear-gradient(160deg,#faf6ed,#ede3d0);
+      border:2px solid #c8b89a;border-radius:20px;
+      padding:2.8rem 2.2rem 2.2rem;
+      width:clamp(300px,85vw,400px);
+      text-align:center;
+      box-shadow:0 20px 60px rgba(0,0,0,.3);
+      animation:gateIn .5s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .gate-box::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:4px;
+      background:linear-gradient(90deg,#6b7b3c,#8a9e4e,#c8b89a,#8a9e4e,#6b7b3c);
+    }
+    @keyframes gateIn{
+      from{opacity:0;transform:scale(.92) translateY(20px)}
+      to{opacity:1;transform:scale(1) translateY(0)}
+    }
+    .gate-box .gate-icon{font-size:3.2rem;margin-bottom:.2rem}
+    .gate-box h2{
+      color:#4a5a2a;font-size:1.3rem;font-weight:700;
+      letter-spacing:.06em;margin-bottom:.2rem;
+    }
+    .gate-box .gate-sub{
+      color:#8a7a62;font-size:.82rem;margin-bottom:1.4rem;
+    }
+    .gate-box .gate-input{
+      width:100%;padding:.7rem .8rem;
+      border:2px solid #d4c4a8;border-radius:10px;
+      font-size:1rem;font-family:inherit;
+      background:#f5efe0;color:#4a3f35;
+      outline:none;text-align:center;
+      letter-spacing:.3em;
+      transition:border-color .25s;
+    }
+    .gate-box .gate-input:focus{border-color:#6b7b3c}
+    .gate-box .gate-input::placeholder{letter-spacing:0;color:#cbb99a}
+    .gate-box .gate-err{
+      color:#b34a4a;font-size:.8rem;margin-top:.6rem;display:none;
+    }
+    .gate-box .gate-btn{
+      display:block;width:100%;margin-top:.9rem;
+      padding:.65rem;border:none;border-radius:10px;
+      background:linear-gradient(135deg,#5d6f38,#6b7b3c);
+      color:#f5efe0;font-size:.95rem;font-weight:600;
+      font-family:inherit;cursor:pointer;
+      transition:background .25s,transform .15s;
+      letter-spacing:.08em;
+    }
+    .gate-box .gate-btn:hover{background:linear-gradient(135deg,#4a5a2a,#5d6f38);transform:translateY(-1px)}
+    .gate-box .gate-btn:active{transform:translateY(0)}
+    .gate-box .gate-hint{
+      margin-top:1rem;font-size:.7rem;color:#ab9c82;
+    }
+
+    .welcome-card,.about-card{
+      background:#faf6ed;border:1px solid #e4d8c0;
+      border-radius:14px;padding:2rem 1.5rem;text-align:center;
+    }
+    .welcome-card .icon{font-size:clamp(2.2rem,8vw,3.2rem);margin-bottom:.4rem}
+    .welcome-card h3{color:#4a5a2a;font-size:clamp(1.05rem,3vw,1.25rem)}
+    .welcome-card p{margin-top:.5rem;color:#6a5f50;font-size:.88rem;line-height:1.8}
+    .about-card .avatar{font-size:clamp(2.8rem,10vw,3.8rem);margin-bottom:.4rem}
+    .about-card h2{color:#4a5a2a;font-size:clamp(1.1rem,3.5vw,1.4rem)}
+    .about-card .desc{margin:.6rem 0;color:#6a5f50;font-size:.88rem;line-height:1.8}
+    .about-card .contact-row{display:flex;justify-content:center;gap:.8rem;flex-wrap:wrap;margin-top:.8rem}
+    .about-card .contact-row a{
+      display:inline-flex;align-items:center;gap:4px;
+      padding:.35rem .9rem;background:#e4d8c0;border-radius:20px;
+      font-size:.82rem;color:#4a3f35;transition:background .25s;
+    }
+    .about-card .contact-row a:hover{background:#d4c4a8;text-decoration:none}
+
+    .info-card{
+      background:#faf6ed;border:1px solid #e4d8c0;
+      border-radius:14px;padding:1.5rem;margin-bottom:1rem;
+    }
+    .info-card h3{color:#4a5a2a;font-size:1.05rem;margin-bottom:.3rem}
+    .info-card p{color:#6a5f50;font-size:.88rem;line-height:1.75}
+    .info-card .tag{
+      display:inline-block;margin-top:.4rem;padding:.08rem .5rem;
+      background:#e4d8c0;border-radius:10px;font-size:.7rem;color:#6a5f50;
+    }
+
+    /* ===== Footer ===== */
+    footer{
+      text-align:center;padding:1.5rem 1.2rem;
+      color:#ab9c82;font-size:.76rem;
+      border-top:1px solid #e4d8c0;background:#ede3d0;
+    }
+    footer a{color:#6b7b3c}
+
+    @media(max-width:400px){
+      .card,.welcome-card,.about-card,.info-card{padding:1rem}
+      .panel{padding:1.2rem .6rem 2rem}
+      .card .dl-row{flex-direction:column}
+      .card .dl-btn{justify-content:center}
+    }
+
+    /* ===== Template download center (角色卡) ===== */
+    .template-section{
+      margin-bottom:2rem;
+    }
+    .template-section .ts-header{
+      display:flex;align-items:baseline;justify-content:space-between;
+      flex-wrap:wrap;gap:.3rem 1rem;
+      margin-bottom:1rem;
+    }
+    .template-section .ts-header h3{
+      font-size:1.05rem;color:#4a5a2a;font-weight:700;
+    }
+    .template-section .ts-header .ts-count{
+      font-size:.78rem;color:#ab9c82;
+    }
+    .template-grid{
+      display:grid;grid-template-columns:1fr 1fr;
+      gap:1rem;
+    }
+    .template-card{
+      background:#faf6ee;
+      border:1px solid #e4d8c0;
+      border-radius:10px;
+      padding:1.1rem 1.2rem;
+      transition:box-shadow .25s,transform .2s;
+      display:flex;flex-direction:column;
+    }
+    .template-card:hover{
+      box-shadow:0 4px 16px rgba(74,90,42,.1);
+      transform:translateY(-2px);
+    }
+    .template-card .tc-icon{
+      font-size:1.6rem;margin-bottom:.4rem;
+    }
+    .template-card h4{
+      font-size:.95rem;color:#4a3f35;font-weight:700;
+      margin:0 0 .2rem;
+    }
+    .template-card .tc-desc{
+      font-size:.8rem;color:#8a7a62;line-height:1.5;
+      flex:1;margin-bottom:.6rem;
+    }
+    .template-card .tc-meta{
+      display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.7rem;
+    }
+    .template-card .tc-meta span{
+      font-size:.68rem;padding:.12rem .5rem;
+      background:#e4d8c0;color:#5a4f42;
+      border-radius:12px;
+    }
+    .template-card .tc-btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:5px;
+      padding:.45rem 0;width:100%;
+      background:#6b7b3c;color:#f5efe0;
+      border-radius:6px;font-size:.82rem;font-weight:600;
+      text-decoration:none;transition:background .25s;
+    }
+    .template-card .tc-btn:hover{background:#4a5a2a}
+    .template-empty{
+      grid-column:1/-1;
+      text-align:center;padding:2.5rem 1rem;
+      color:#ab9c82;
+    }
+    .template-empty .empty-icon{font-size:2.2rem;margin-bottom:.5rem}
+    .template-empty p{font-size:.88rem;line-height:1.6;margin:0}
+
+    /* ===== Character Dossier (人物档案展示) ===== */
+    .dossier-section{
+      margin-top:2.5rem;padding-top:2rem;
+      border-top:2px dashed #d4c8b0;
+    }
+    .dossier-section .ds-header{
+      display:flex;align-items:baseline;gap:.5rem 1rem;flex-wrap:wrap;
+      margin-bottom:1.2rem;
+    }
+    .dossier-section .ds-header h3{
+      font-size:1.05rem;color:#4a5a2a;font-weight:700;
+    }
+    .dossier-section .ds-header .ds-count{
+      font-size:.78rem;color:#ab9c82;
+    }
+
+    /* Dossier Card — leather file style */
+    .dossier-card{
+      background:linear-gradient(135deg,#f5efe0 0%,#ede3d0 100%);
+      border:2px solid #c8b89a;
+      border-radius:12px;
+      padding:1.2rem 1.2rem 1rem;
+      box-shadow:0 3px 15px rgba(74,58,42,.08);
+      position:relative;
+      max-width:780px;margin:0 auto 2rem;
+    }
+    .dossier-card::before{
+      content:'';position:absolute;top:-6px;left:24px;right:24px;
+      height:3px;border-radius:3px;
+      background:linear-gradient(90deg,#6b7b3c,#8a9e4e,#6b7b3c);
+    }
+
+    /* Name badge */
+    .dc-badge{
+      display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;
+      margin-bottom:.8rem;
+      padding-bottom:.6rem;
+      border-bottom:1px solid #d4c8b0;
+    }
+    .dc-badge .avatar-placeholder{
+      width:48px;height:48px;border-radius:50%;
+      background:#d4c8b0;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.4rem;color:#8a7a62;flex-shrink:0;
+      border:2px solid #c8b89a;
+    }
+    .dc-badge .badge-info{flex:1;min-width:0}
+    .dc-badge .badge-info .dc-name{
+      font-size:1.05rem;font-weight:700;color:#3f3428;
+      letter-spacing:.04em;
+    }
+    .dc-badge .badge-info .dc-name .dc-tag{
+      font-size:.62rem;font-weight:400;color:#8a7a62;
+      background:#e4d8c0;padding:.08rem .45rem;border-radius:8px;
+      margin-left:.4rem;vertical-align:middle;
+    }
+    .dc-badge .badge-info .dc-sub{
+      font-size:.72rem;color:#8a7a62;margin-top:1px;
+      display:flex;flex-wrap:wrap;gap:2px 10px;
+    }
+    .dc-badge .badge-info .dc-sub span{white-space:nowrap}
+
+    /* Attribute row — compact 4-col */
+    .dc-stats{
+      display:grid;grid-template-columns:1fr 1fr 1fr 1fr;
+      gap:.35rem .6rem;margin-bottom:.8rem;
+    }
+    .dc-stat{
+      display:flex;align-items:center;gap:.3rem;
+    }
+    .dc-stat .s-label{
+      font-size:.62rem;font-weight:700;color:#6b5a48;
+      min-width:2.6em;text-align:right;flex-shrink:0;
+    }
+    .dc-stat .s-bar{
+      flex:1;height:8px;background:#e4d8c0;border-radius:4px;
+      overflow:hidden;min-width:0;
+    }
+    .dc-stat .s-bar .s-fill{
+      height:100%;border-radius:4px;transition:width 1s ease;
+    }
+    .dc-stat .s-val{
+      font-size:.62rem;color:#5a4f42;font-weight:600;min-width:1.8em;text-align:right;flex-shrink:0;
+    }
+    .dc-stat .s-half{font-size:.55rem;color:#ab9c82;min-width:1.5em;text-align:left;flex-shrink:0;}
+    .s-fill.str{background:#8f5e3c;width:65%}
+    .s-fill.dex{background:#5d8042;width:35%}
+    .s-fill.con{background:#6a8c5e;width:70%}
+    .s-fill.app{background:#b58a6b;width:75%}
+    .s-fill.edu{background:#5e7a9e;width:80%}
+    .s-fill.siz{background:#7d6b55;width:65%}
+    .s-fill.int{background:#7e8d9e;width:60%}
+    .s-fill.pow{background:#7e6b8a;width:55%}
+    .s-fill.str2{background:#8f5e3c;width:80%}
+    .s-fill.dex2{background:#5d8042;width:80%}
+    .s-fill.con2{background:#6a8c5e;width:55%}
+    .s-fill.app2{background:#b58a6b;width:40%}
+    .s-fill.edu2{background:#5e7a9e;width:75%}
+    .s-fill.siz2{background:#7d6b55;width:65%}
+    .s-fill.int2{background:#7e8d9e;width:70%}
+    .s-fill.pow2{background:#7e6b8a;width:50%}
+    .s-fill.str3{background:#8f5e3c;width:40%}
+    .s-fill.dex3{background:#5d8042;width:60%}
+    .s-fill.con3{background:#6a8c5e;width:85%}
+    .s-fill.app3{background:#b58a6b;width:60%}
+    .s-fill.edu3{background:#5e7a9e;width:70%}
+    .s-fill.siz3{background:#7d6b55;width:65%}
+    .s-fill.int3{background:#7e8d9e;width:65%}
+    .s-fill.pow3{background:#7e6b8a;width:80%}
+    .s-fill.str4{background:#8f5e3c;width:75%}
+    .s-fill.dex4{background:#5d8042;width:60%}
+    .s-fill.con4{background:#6a8c5e;width:65%}
+    .s-fill.app4{background:#b58a6b;width:65%}
+    .s-fill.edu4{background:#5e7a9e;width:70%}
+    .s-fill.siz4{background:#7d6b55;width:70%}
+    .s-fill.int4{background:#7e8d9e;width:75%}
+    .s-fill.pow4{background:#7e6b8a;width:85%}
+    .s-fill.str5{background:#8f5e3c;width:45%}
+    .s-fill.dex5{background:#5d8042;width:70%}
+    .s-fill.con5{background:#6a8c5e;width:50%}
+    .s-fill.app5{background:#b58a6b;width:65%}
+    .s-fill.edu5{background:#5e7a9e;width:70%}
+    .s-fill.siz5{background:#7d6b55;width:45%}
+    .s-fill.int5{background:#7e8d9e;width:80%}
+    .s-fill.pow5{background:#7e6b8a;width:55%}
+
+    /* Vital stats */
+    .dc-vitals{
+      display:flex;flex-wrap:wrap;gap:.35rem;
+      margin-bottom:.8rem;
+    }
+    .dc-vital{
+      flex:1;min-width:60px;
+      background:#faf6ee;border:1px solid #e4d8c0;
+      border-radius:6px;padding:.2rem .35rem;text-align:center;
+    }
+    .dc-vital .v-label{
+      font-size:.55rem;color:#8a7a62;display:block;
+    }
+    .dc-vital .v-val{
+      font-size:.8rem;font-weight:700;color:#4a3f35;
+    }
+    .dc-vital .v-val .v-sub{font-size:.6rem;font-weight:400;color:#ab9c82}
+    .dc-vital.highlight{
+      background:#ede3d0;border-color:#c8b89a;
+    }
+
+    /* Skills section */
+    .dc-skills{
+      margin-bottom:.6rem;
+    }
+    .dc-skills h5{
+      font-size:.68rem;color:#6b5a48;font-weight:700;
+      margin:0 0 .25rem;letter-spacing:.05em;
+    }
+    .dc-skills .skill-tags{
+      display:flex;flex-wrap:wrap;gap:4px;
+    }
+    .dc-skills .skill-tags .skill-tag{
+      font-size:.62rem;padding:.12rem .45rem;
+      border-radius:5px;color:#4a3f35;
+    }
+    .skill-tag.own{background:#d4dbb8;color:#3f4e22}
+    .skill-tag.mast{background:#c8b89a;color:#5a4030;font-weight:600}
+    .skill-tag.prof{background:#b8c8d8;color:#3a5060}
+
+    /* Weapons */
+    .dc-weapons{
+      margin-bottom:.5rem;
+    }
+    .dc-weapons h5{
+      font-size:.68rem;color:#6b5a48;font-weight:700;
+      margin:0 0 .25rem;letter-spacing:.05em;
+    }
+    .dc-weapon-row{
+      display:flex;flex-wrap:wrap;gap:4px 10px;
+      font-size:.65rem;color:#5a4f42;
+      padding:.2rem .45rem;border-radius:3px;
+      background:#faf6ee;
+    }
+    .dc-weapon-row .wp-name{font-weight:600;min-width:7em}
+    .dc-weapon-row .wp-dmg{color:#7a5a3a}
+    .dc-weapon-row .wp-skill{color:#6a7a4a}
+
+    /* Golden quote — decorative callout */
+    .dc-quote{
+      margin-top:.8rem;
+      padding:.7rem 1rem .7rem 1.2rem;
+      background:#ede3d0;
+      border-left:3px solid #b89a6a;
+      border-radius:0 8px 8px 0;
+      position:relative;
+    }
+    .dc-quote::before{
+      content:'❝';position:absolute;top:-2px;left:4px;
+      font-size:1rem;color:#c8b080;line-height:1;
+    }
+    .dc-quote .quote-text{
+      font-size:.75rem;color:#6b5a48;line-height:1.7;
+      font-style:italic;margin:0;padding-left:.6rem;
+    }
+
+    /* Detail row: left info + right story */
+    .dc-detail-row{
+      display:grid;grid-template-columns:240px 1fr;
+      gap:.8rem;margin-top:.4rem;padding-top:.5rem;
+      border-top:1px solid #d4c8b0;
+    }
+    .dc-detail-left{
+      display:flex;flex-direction:column;gap:.35rem;
+    }
+    .dc-detail-right{
+      min-width:0;
+    }
+    .dc-info-block{
+      background:#faf6ee;border:1px solid #e4d8c0;
+      border-radius:6px;padding:.3rem .5rem;
+    }
+    .dc-info-block h5{
+      font-size:.62rem;color:#6b5a48;font-weight:700;
+      margin:0 0 .12rem;letter-spacing:.04em;
+    }
+    .dc-info-block .info-text{
+      font-size:.65rem;color:#5a4f42;line-height:1.4;
+      margin:0;
+    }
+    /* Quick info — compact grid */
+    .dc-quick-info{
+      display:grid;grid-template-columns:1fr 1fr;
+      gap:2px 8px;padding:.35rem .55rem;
+    }
+    .qi-item{
+      display:flex;align-items:baseline;gap:2px;
+    }
+    .qi-item .qi-label{
+      font-size:.58rem;color:#8a7a62;white-space:nowrap;flex-shrink:0;
+    }
+    .qi-item .qi-val{
+      font-size:.65rem;color:#4a3f35;line-height:1.35;min-width:0;
+    }
+    /* 长文本条目（描述）跨两列 */
+    .qi-item.wide{grid-column:1/-1}
+    .dc-info-block .story-text p{
+      font-size:.7rem;color:#4a3f35;line-height:1.6;
+      margin:0 0 .4rem;text-indent:1.5em;
+    }
+    .dc-info-block .story-text p:last-child{margin-bottom:0}
+
+    /* Golden quote — decorative callout */
+    .dc-quote{
+      margin-top:.5rem;
+      padding:.4rem .8rem .4rem 1rem;
+      background:#ede3d0;
+      border-left:2px solid #b89a6a;
+      border-radius:0 6px 6px 0;
+      position:relative;
+    }
+    .dc-quote::before{
+      content:'❝';position:absolute;top:-1px;left:3px;
+      font-size:.85rem;color:#c8b080;line-height:1;
+    }
+    .dc-quote .quote-text{
+      font-size:.68rem;color:#6b5a48;line-height:1.5;
+      font-style:italic;margin:0;padding-left:.5rem;
+    }
+
+    .dc-note{
+      margin-top:.5rem;text-align:center;
+      font-size:.6rem;color:#ab9c82;letter-spacing:.03em;
+    }
+
+    @media(max-width:600px){
+      .template-grid{grid-template-columns:1fr}
+      .dc-stats{grid-template-columns:1fr 1fr}
+      .dc-detail-row{grid-template-columns:1fr}
+      .dossier-card{padding:.8rem}
+    }
+    .log-entry{
+      margin-bottom:3rem;
+      background:#faf6ee;
+      border:2px solid #d4c8b0;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 4px 24px rgba(74,90,42,.1), inset 0 0 0 1px rgba(255,255,255,.5);
+      position:relative;
+    }
+    .log-entry::before{
+      content:'';position:absolute;top:0;left:0;right:0;
+      height:4px;
+      background:linear-gradient(90deg,#3f4e22,#6b7b3c,#c4a86a,#6b7b3c,#3f4e22);
+    }
+
+    /* --- Header: case file ribbon --- */
+    .log-header{
+      background:linear-gradient(160deg,#3a4920,#4d5e30);
+      padding:1.6rem 2rem 1.2rem;
+      color:#f5efe0;
+      position:relative;
+      border-bottom:3px solid #c4a86a;
+    }
+    .log-header .log-badge{
+      display:inline-flex;align-items:center;gap:5px;
+      font-size:.65rem;letter-spacing:.15em;
+      text-transform:uppercase;
+      background:rgba(196,168,106,.2);
+      border:1px solid rgba(196,168,106,.35);
+      padding:.25rem .8rem;border-radius:3px;
+      margin-bottom:.7rem;
+    }
+    .log-header .log-badge .dot{
+      display:inline-block;width:6px;height:6px;
+      background:#c4a86a;border-radius:50%;
+      animation:pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+    .log-header .log-title-group{
+      display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;
+      gap:.3rem 1rem;
+    }
+    .log-header h2{
+      font-size:clamp(1.4rem,5vw,2rem);
+      font-weight:700;letter-spacing:.06em;
+      margin:0;line-height:1.2;
+    }
+    .log-header h2 .sub{
+      font-weight:400;font-size:.65em;opacity:.6;
+      display:block;letter-spacing:.15em;margin-top:.15rem;
+    }
+    .log-header .log-case-num{
+      font-size:.75rem;opacity:.5;
+      font-family:monospace;letter-spacing:.1em;
+      white-space:nowrap;
+    }
+    .log-header .log-meta-row{
+      display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;
+      margin-top:.8rem;padding-top:.8rem;
+      border-top:1px solid rgba(245,239,224,.12);
+      font-size:.78rem;opacity:.8;
+    }
+    .log-header .log-meta-row span{white-space:nowrap}
+
+    /* --- Body: dossier panels --- */
+    .log-body{padding:1.6rem 2rem 2rem}
+
+    /* Reading notice */
+    .log-notice{
+      background:#2c2c2c;color:#d4c8b0;
+      border:1px solid #4a4a4a;
+      border-radius:6px;padding:.7rem 1rem;
+      margin-bottom:1.5rem;
+      font-size:.82rem;line-height:1.6;
+      display:flex;align-items:flex-start;gap:.6rem;
+    }
+    .log-notice .notice-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+    .log-notice strong{color:#c4a86a}
+
+    /* Synopsis - full width atmospheric pull */
+    .log-synopsis-wrap{
+      margin-bottom:1.5rem;
+      position:relative;
+    }
+    .log-synopsis-wrap::before{
+      content:'';position:absolute;top:0;bottom:0;left:-.3rem;
+      width:3px;background:linear-gradient(180deg,#c4a86a,#6b7b3c);
+      border-radius:2px;
+    }
+    .log-synopsis{
+      padding:.2rem 0 .2rem 1rem;
+      font-size:.92rem;line-height:1.8;
+      color:#4a3f35;
+    }
+    .log-synopsis p{margin:.3rem 0}
+
+    /* --- Two-column info panel --- */
+    .log-info-grid{
+      display:grid;grid-template-columns:1fr 1fr;
+      gap:1rem;margin-bottom:1.5rem;
+    }
+    .log-info-panel{
+      background:#fff8ee;
+      border:1px solid #e4d8c0;
+      border-radius:8px;padding:.8rem 1rem;
+    }
+    .log-info-panel h4{
+      font-size:.75rem;text-transform:uppercase;
+      letter-spacing:.12em;color:#ab9c82;
+      margin:0 0 .4rem;font-weight:600;
+    }
+    .log-info-panel ul{
+      list-style:none;padding:0;margin:0;
+    }
+    .log-info-panel li{
+      font-size:.82rem;color:#5a4f42;
+      padding:.15rem 0;line-height:1.5;
+    }
+    .log-info-panel li::before{
+      content:'▸ ';color:#c4a86a;font-weight:700;
+    }
+
+    /* --- Puzzle highlight box --- */
+    .log-puzzle-box{
+      background:#2c2c2c;
+      border-left:4px solid #c4a86a;
+      border-radius:0 8px 8px 0;
+      padding:.8rem 1rem;
+      margin-bottom:1.5rem;
+      display:flex;align-items:flex-start;gap:.7rem;
+    }
+    .log-puzzle-box .pz-icon{
+      font-size:1.4rem;flex-shrink:0;margin-top:.1rem;
+    }
+    .log-puzzle-box .pz-content{
+      font-size:.82rem;color:#d4c8b0;line-height:1.6;
+    }
+    .log-puzzle-box .pz-content strong{color:#c4a86a}
+    .log-puzzle-box .pz-content .highlight{
+      display:inline-block;
+      background:rgba(196,168,106,.15);
+      color:#c4a86a;padding:0 .4rem;border-radius:3px;
+      font-weight:600;
+    }
+
+    /* Tags */
+    .log-tags{
+      display:flex;flex-wrap:wrap;gap:5px;
+      margin-bottom:1.2rem;
+    }
+    .log-tags span{
+      font-size:.72rem;padding:.25rem .7rem;
+      background:#e4d8c0;color:#5a4f42;
+      border-radius:20px;letter-spacing:.02em;
+      transition:background .2s;
+    }
+    .log-tags span.spoiler{
+      background:#4a3f35;color:#c4a86a;
+    }
+
+    /* Footer */
+    .log-footer{
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:.6rem;
+      padding-top:1rem;border-top:2px solid #e4d8c0;
+    }
+    .log-footer .log-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:.55rem 1.4rem;
+      background:linear-gradient(135deg,#5d6f38,#6b7b3c);
+      color:#f5efe0;
+      border-radius:8px;font-size:.85rem;font-weight:600;
+      transition:all .25s;text-decoration:none;
+      letter-spacing:.03em;
+      box-shadow:0 2px 8px rgba(74,90,42,.2);
+    }
+    .log-footer .log-btn:hover{
+      background:linear-gradient(135deg,#4a5a2a,#5d6f38);
+      transform:translateY(-2px);
+      box-shadow:0 4px 14px rgba(74,90,42,.3);
+    }
+    .log-footer .log-credit{
+      font-size:.8rem;color:#ab9c82;
+      text-align:right;line-height:1.4;
+    }
+    .log-footer .log-credit strong{color:#6b7b3c;font-weight:600}
+
+    @media(max-width:600px){
+      .log-info-grid{grid-template-columns:1fr}
+      .log-header,.log-body{padding-left:1.2rem;padding-right:1.2rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== ENTRY GATE (全页密码) ===== -->
+<div class="gate-overlay" id="gateOverlay">
+  <div class="gate-box">
+    <div class="gate-icon">🐱</div>
+    <h2>以猫还猫</h2>
+    <p class="gate-sub">此站点需要密码才能访问</p>
+    <input class="gate-input" type="password" id="gateInput" placeholder="输入密码" autocomplete="off" spellcheck="false">
+    <div class="gate-err" id="gateErr">❌ 密码错误，请重试</div>
+    <button class="gate-btn" id="gateBtn">进入博客</button>
+    <p class="gate-hint">提示：全大写英文字母</p>
+  </div>
+</div>
+
+<!-- ===== HAMBURGER BUTTON ===== -->
+<button class="menu-btn" id="menuBtn" aria-label="菜单">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- ===== MENU OVERLAY ===== -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<!-- ===== MENU PANEL ===== -->
+<div class="menu-panel" id="menuPanel">
+  <div class="menu-header">
+    <div class="brand">以猫还猫</div>
+    <div class="brand-sub">导航菜单</div>
+  </div>
+  <div class="menu-list">
+    <!-- 模组 -->
+    <div class="menu-section">
+      <button class="menu-top" data-toggle="ms-mod">
+        📂 模组 <span class="arr">▼</span>
+      </button>
+      <div class="menu-sub" id="ms-mod">
+        <button class="menu-sub-item" data-panel="panel-mod-coc">COC</button>
+        <button class="menu-sub-item" data-panel="panel-mod-other">其他</button>
+      </div>
+    </div>
+    <!-- 记录 -->
+    <div class="menu-section">
+      <button class="menu-top" data-toggle="ms-log">
+        📝 记录 <span class="arr">▼</span>
+      </button>
+      <div class="menu-sub" id="ms-log">
+        <button class="menu-sub-item" data-panel="panel-log">LOG</button>
+        <button class="menu-sub-item" data-panel="panel-char">角色卡</button>
+      </div>
+    </div>
+    <!-- Dice (direct) -->
+    <div class="menu-section">
+      <button class="menu-top direct" data-panel="panel-dice">
+        🎲 Dice
+      </button>
+    </div>
+    <!-- 导航 (direct) -->
+    <div class="menu-section">
+      <button class="menu-top direct" data-panel="panel-nav">
+        🧭 导航
+      </button>
+    </div>
+    <!-- 关于 (direct) -->
+    <div class="menu-section">
+      <button class="menu-top direct" data-panel="panel-about">
+        关于
+      </button>
+    </div>
+  </div>
+  <div class="menu-footer">✉ 3207655060@qq.com</div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="header-frame">
+    <h1>以猫还猫</h1>
+    <div class="subtitle">
+      以狗报狗，以猫还猫。<br>
+      <small>本站点为个人博客，仅供参考学习使用。想扩列刷空间请加：</small>
+    </div>
+  </div>
+  <a class="email" href="mailto:3207655060@qq.com">✉ 3207655060@qq.com</a>
+</header>
+
+<!-- ===== CONTENT ===== -->
+<div class="content-area">
+  <div class="panel active" id="panel-default">
+    <div class="panel-title">欢迎</div>
+    <div class="welcome-card">
+      <div class="icon">🦊</div>
+      <h3>欢迎光临</h3>
+      <p>
+        点击左上角的 <strong>☰</strong> 菜单探索吧——<br><br>
+        <strong>📂 模组</strong> — 我收集和翻译的跑团模组<br>
+        <strong>📝 记录</strong> — 跑团 LOG 与角色卡存档<br>
+        <strong>🎲 Dice</strong> — 我的骰子机器人介绍和使用手册<br>
+        <strong>🧭 导航</strong> — 各种 TRPG 相关链接与工具<br>
+        <strong>🦊 关于</strong> — 这个站点的说明
+      </p>
+    </div>
+  </div>
+
+  <!-- 模组 - COC -->
+  <div class="panel" id="panel-mod-coc">
+    <div class="panel-title">模组 · COC</div>
+
+    <div class="card">
+      <div class="date">2026 年 6 月</div>
+      <h3>🦋 紲（KIZUNA）</h3>
+      <div class="desc">
+        <p>🎯 时代：现代日本</p>
+        <p>📍 地点：郊外山脚下一座纯白色的、没有窗户的密闭设施</p>
+        <p>👥 人物：你与一位朋友（固定2人），被一副手铐锁在一起</p>
+        <br>
+        <p>你们约好出门碰头，在见面的那一瞬间失去了意识。醒来后，发现自己身处一间全白的陌生房间，两人的手被手铐牢牢锁住。房间里有一台电脑，屏幕上写着一个三小时的倒计时——以及一段来自自称「伏行的混沌」的留言。</p>
+        <p>搞清楚这里是哪、解开谜题、找到出口。至于你能不能信任身边那个人……那是另一个问题。</p>
+        <p>⏱ 4h+ · 推荐技能：电子学 / 医学 / 侦查 / 聆听</p>
+      </div>
+      <div class="tags"><span>COC 7版</span><span>固定2人</span><span>密室逃脱</span><span>悬疑</span></div>
+      <div class="dl-row">
+        <a class="dl-btn" href="/downloads/紲-安装包.zip" download target="_blank">⬇ 下载安装包 (ZIP)</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="date">2026 年 6 月</div>
+      <h3>🏛️ 监狱馆杀人事件</h3>
+      <div class="desc">
+        <p>🎯 时代：现代日本</p>
+        <p>📍 地点：深山中的「监狱馆」——一座无法打开任何门窗的封闭豪宅</p>
+        <p>👥 人物：你（侦探）、你的助手、一位刑警（固定3人）</p>
+        <br>
+        <p>病危的英国富豪犬鸣雷欧将散落在各地的养子们召回至这座奇特的公馆，准备立下遗嘱。与此同时，外界流传着「迷雾中的狂犬杀人」的离奇传闻——而这一切，似乎与犬鸣家脱不开干系。你们受委托前来，却发现这座豪宅本身就是一座巨大的密室。</p>
+        <p>门窗紧锁，大雾封山，命案发生。嫌疑人，就在这栋房子里。</p>
+        <p>⏱ 语音 8–12h · 推荐技能：侦查 / 聆听 / 图书馆利用</p>
+      </div>
+      <div class="tags"><span>COC 7版</span><span>3人固定</span><span>本格推理</span><span>密室杀人</span><span>含NPC数据</span></div>
+      <div class="dl-row"><a class="dl-btn" href="/downloads/监狱馆杀人事件.docx" download target="_blank">⬇ 模组 (DOCX)</a></div>
+    </div>
+
+    <div class="card">
+      <div class="date">2026 年 6 月</div>
+      <h3>🐢 海龟汤 · 谁杀之谜</h3>
+      <div class="desc">
+        <p>🎯 时代：现代日本</p>
+        <p>📍 地点：一座普通住宅，以及被「海龟汤」谜题串联起来的不可视全貌的事件网络</p>
+        <p>👥 人物：你与其他探索者（灵活人数）——一群被卷入连环谜题的人</p>
+        <br>
+        <p>起初只是一场海龟汤推理游戏——一人出题，众人提问，猜出真相即可通关。但随着一个又一个谜题被解开，你逐渐发现，这些看似独立的汤面背后，牵连着同一个事件。以及，几个真实存在的人。</p>
+        <p>海龟汤的规则很简单：你提问，我回答是或否。但你很快会发现——出题人想让你解开的东西，不是面前这碗汤。</p>
+        <p>📦 翻译包内含：34张图片 + 48篇文章翻译 · 大量角色设定与NPC背景资料</p>
+        <p>⏱ 中长篇 · 推荐技能：侦查 / 图书馆利用 / 心理学</p>
+      </div>
+      <div class="tags"><span>COC 7版</span><span>灵活人数</span><span>推理·悬疑</span><span>翻译包</span></div>
+      <div class="dl-row"><a class="dl-btn" href="/downloads/海龟汤谁杀之谜.zip" download target="_blank">⬇ 翻译包 (ZIP)</a></div>
+    </div>
+
+    <div class="card">
+      <div class="date">推荐</div>
+      <h3>🚢 摩洛哥港杀人事件</h3>
+      <div class="desc">
+        <p>🎯 时代：1925年 · 近代</p>
+        <p>📍 地点：摩洛哥萨菲港 · 停泊的「茉莉安号」上</p>
+        <p>👥 人物：调查员（2-5人）——接受委托上船查案</p>
+        <br>
+        <p>停泊于摩洛哥萨菲港的茉莉安号上发生了骇人听闻的密室谋杀案。调查员接受委托登上这艘船，面对的是复杂的连环迷局——而诡计背后，还有更深沉的诡计。</p>
+        <p>纯推理模组，没有多少战斗内容。如果你的团喜欢动脑子不喜欢动拳头，这碗正合适。</p>
+        <p>⏱ 4-8h · 推荐技能：侦查 / 聆听 / 图书馆利用</p>
+      </div>
+      <div class="tags"><span>COC 7版</span><span>2-5人</span><span>密室谋杀</span><span>纯推理</span><span>🚢 船上</span></div>
+      <div class="dl-row"><a class="dl-btn dl-btn-ext" href="https://cnmods.lanzoui.com/izkACguya4j" target="_blank">⬇ 下载模组 (魔都TRPG)</a></div>
+    </div>
+
+    <div class="card">
+      <div class="date">推荐</div>
+      <h3>🕳️ 下水道连环杀人案 v2.0</h3>
+      <div class="desc">
+        <p>🎯 时代：1875年 · 近古</p>
+        <p>📍 地点：某城市的地下排水系统——下水道</p>
+        <p>👥 人物：调查员（3-5人）——受伯爵管家委托前来调查</p>
+        <br>
+        <p>1875年6月，调查员们接到一位伯爵管家的委托：城市的下水道中发生了连续杀人案，受害者不断增加，凶手身份不明，作案动机不明，唯一的共同点是——尸体都出现在下水道里。</p>
+        <p>你们将深入阴暗潮湿的地下迷宫，在恶臭与黑暗中追寻一个隐藏在管道深处的真相。</p>
+        <p>⏱ 8-16h · 推荐技能：侦查 / 追踪 / 战斗技能</p>
+      </div>
+      <div class="tags"><span>COC 7版</span><span>3-5人</span><span>连环杀人</span><span>地下探索</span><span>作者：胖绅士</span></div>
+      <div class="dl-row"><a class="dl-btn dl-btn-ext" href="https://wwvh.lanzoum.com/ifEX032zcm2h" target="_blank">⬇ 下载模组 (魔都TRPG)</a></div>
+    </div>
+  </div>
+
+  <!-- 模组 - 其他 -->
+  <div class="panel" id="panel-mod-other">
+    <div class="panel-title">模组 · 其他规则</div>
+    <div class="info-card">
+      <h3>🎲 其他规则系统</h3>
+      <p>除 COC 之外的其他 TRPG 模组整理，包括 D&D、暗黑世界、Fate Core 等规则。欢迎推荐好玩的模组！</p>
+      <span class="tag">建设中</span>
+    </div>
+  </div>
+
+  <!-- 记录 - LOG -->
+  <div class="panel" id="panel-log">
+    <div class="panel-title">记录 · LOG</div>
+
+    <div class="log-entry">
+      <div class="log-header">
+        <div class="log-badge">
+          <span class="dot"></span>
+          事件档案 · 第1号
+        </div>
+        <div class="log-title-group">
+          <h2>
+            紲（KIZUNA）
+            <span class="sub">—— 弹丸论破 × COC 跨界推理LOG</span>
+          </h2>
+          <span class="log-case-num">CASE FILE • NO.001</span>
+        </div>
+        <div class="log-meta-row">
+          <span>📅 2025.2.26 — 3.9</span>
+          <span>📄 全108页</span>
+          <span>🎭 2人 / 固定</span>
+          <span>✎ Glide</span>
+        </div>
+      </div>
+
+      <div class="log-body">
+
+        <div class="log-notice">
+          <span class="notice-icon">📌</span>
+          <span>本作借用模组《紲》为舞台，但故事真相与原模组<strong>完全不同</strong>。</span>
+        </div>
+
+        <div class="log-synopsis-wrap">
+          <div class="log-synopsis">
+            <p>白色的天花板、白色的墙壁、白色的地板。被拷在一起的人是……另一个自己？</p>
+          </div>
+        </div>
+
+        <div class="log-info-grid">
+          <div class="log-info-panel">
+            <h4>📋 案件基本信息</h4>
+            <ul>
+              <li>原作舞台：宴规《紲》（KIZUNA）</li>
+              <li>出演角色：松田夜助 / 江之岛盾子 / 狛枝凪斗 / 召使</li>
+              <li>世界观：弹丸论破原作</li>
+              <li>游戏时间：现实约12天</li>
+              <li>结局：已完结</li>
+            </ul>
+          </div>
+          <div class="log-info-panel">
+            <h4>🧩 阅读指南</h4>
+            <ul>
+              <li>文中穿插「解题板」，答案隐藏于角色行动中，请留心每一处细节</li>
+              <li>建议边读边做笔记，尝试独立推理</li>
+              <li>全文读完可对比核对真相</li>
+              <li>⚠️ 阅读后不建议以PL身份参团《紲》</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="log-tags">
+          <span>#COC7</span>
+          <span>#弹丸论破同人</span>
+          <span class="spoiler">#含剧透</span>
+        </div>
+
+        <div class="log-footer">
+          <a class="log-btn" href="/downloads/紲log(2025.2.26-3.9).pdf" target="_blank">📖 下载全文PDF</a>
+          <div class="log-credit">
+            <strong>Glide</strong><br>
+            <span style="font-size:.72rem;opacity:.7">联系邮箱：3207655060@qq.com</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 记录 - 角色卡 -->
+  <div class="panel" id="panel-char">
+    <div class="panel-title">角色卡 · 模板下载</div>
+
+    <div class="template-section">
+      <div class="ts-header">
+        <h3>📋 空白角色卡模板</h3>
+        <span class="ts-count">共 1 个模板</span>
+      </div>
+      <div class="template-grid">
+        <div class="template-card">
+          <div class="tc-icon">🃏</div>
+          <h4>COC 7版 空白角色卡</h4>
+          <div class="tc-desc">标准 CoC 7th 调查员角色卡，含基础属性、技能、装备、背景栏位。Excel 格式，可直接电子填写。</div>
+          <div class="tc-meta">
+            <span>COC 7版</span>
+            <span>Excel</span>
+            <span>电子填写</span>
+          </div>
+          <a class="tc-btn" href="/downloads/COC7_blank_sheet.xlsx" download>⬇ 下载模板</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 人物档案展示区 -->
+    <div class="dossier-section">
+      <div class="ds-header">
+        <h3>🎭 调查员人物档案</h3>
+        <span class="ds-count">共 5 名调查员</span>
+      </div>
+
+      <div class="dossier-card">
+        <!-- 姓名标牌 -->
+        <div class="dc-badge">
+          <div class="avatar-placeholder">🎩</div>
+          <div class="badge-info">
+            <div class="dc-name">
+              罗杰·杜波伊斯
+              <span class="dc-tag">私酒贩子</span>
+            </div>
+            <div class="dc-sub">
+              <span>🧑‍🦰 男 · 32岁</span>
+              <span>📅 1920s</span>
+              <span>📍 新奥尔良</span>
+              <span>🎲 格莱德</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 属性 -->
+        <div class="dc-stats">
+          <div class="dc-stat"><span class="s-label">STR</span><div class="s-bar"><div class="s-fill str"></div></div><span class="s-val">65</span><span class="s-half">32</span></div>
+          <div class="dc-stat"><span class="s-label">DEX</span><div class="s-bar"><div class="s-fill dex"></div></div><span class="s-val">35</span><span class="s-half">17</span></div>
+          <div class="dc-stat"><span class="s-label">CON</span><div class="s-bar"><div class="s-fill con"></div></div><span class="s-val">70</span><span class="s-half">35</span></div>
+          <div class="dc-stat"><span class="s-label">APP</span><div class="s-bar"><div class="s-fill app"></div></div><span class="s-val">75</span><span class="s-half">37</span></div>
+          <div class="dc-stat"><span class="s-label">EDU</span><div class="s-bar"><div class="s-fill edu"></div></div><span class="s-val">80</span><span class="s-half">40</span></div>
+          <div class="dc-stat"><span class="s-label">SIZ</span><div class="s-bar"><div class="s-fill siz"></div></div><span class="s-val">65</span><span class="s-half">32</span></div>
+          <div class="dc-stat"><span class="s-label">INT</span><div class="s-bar"><div class="s-fill int"></div></div><span class="s-val">60</span><span class="s-half">30</span></div>
+          <div class="dc-stat"><span class="s-label">POW</span><div class="s-bar"><div class="s-fill pow"></div></div><span class="s-val">55</span><span class="s-half">27</span></div>
+        </div>
+
+        <!-- 生命/理智/魔法 -->
+        <div class="dc-vitals">
+          <div class="dc-vital highlight"><span class="v-label">❤️ 生命值 HP</span><span class="v-val">13</span></div>
+          <div class="dc-vital highlight"><span class="v-label">🧠 理智 SAN</span><span class="v-val">55 <span class="v-sub">/ 99</span></span></div>
+          <div class="dc-vital highlight"><span class="v-label">🔮 魔法 MP</span><span class="v-val">11</span></div>
+          <div class="dc-vital"><span class="v-label">🍀 幸运 LUCK</span><span class="v-val">55</span></div>
+          <div class="dc-vital"><span class="v-label">🏃 移动 MOV</span><span class="v-val">8</span></div>
+          <div class="dc-vital"><span class="v-label">💥 伤害加值 DB</span><span class="v-val">+1D4</span></div>
+          <div class="dc-vital"><span class="v-label">🛡️ 体格 Build</span><span class="v-val">1</span></div>
+        </div>
+
+        <!-- 武装技能 -->
+        <div class="dc-skills">
+          <h5>🎯 职业专精技能</h5>
+          <div class="skill-tags">
+            <span class="skill-tag mast">🔫 手枪 75%</span>
+            <span class="skill-tag mast">🔫 冲锋枪 70%</span>
+            <span class="skill-tag own">👂 聆听 50%</span>
+            <span class="skill-tag mast">🧭 导航 60%</span>
+            <span class="skill-tag mast">🔍 侦查 60%</span>
+            <span class="skill-tag own">💬 话术 30%</span>
+            <span class="skill-tag own">😨 恐吓 15%</span>
+            <span class="skill-tag mast">🧠 心理学 42%</span>
+            <span class="skill-tag mast">🤲 妙手 10%</span>
+            <span class="skill-tag own">💵 信用评级 50%</span>
+            <span class="skill-tag own">📖 图书馆使用 20%</span>
+            <span class="skill-tag own">🚗 汽车驾驶 40%</span>
+            <span class="skill-tag own">🏃 闪避 60%</span>
+            <span class="skill-tag own">🔧 机械维修 10%</span>
+            <span class="skill-tag own">🛡️ 斗殴 25%</span>
+          </div>
+        </div>
+
+        <!-- 装备武器 -->
+        <div class="dc-weapons">
+          <h5>🔪 装备武器</h5>
+          <div class="dc-weapon-row"><span class="wp-name">👊 肉搏</span><span class="wp-dmg">1D3+1D4</span><span class="wp-skill">斗殴 25%</span></div>
+          <div class="dc-weapon-row"><span class="wp-name">🔫 柯尔特 M1911</span><span class="wp-dmg">1D10+2</span><span class="wp-skill">手枪 75% · 射程15 · 装弹7</span></div>
+          <div class="dc-weapon-row"><span class="wp-name">🔫 汤普森打字机</span><span class="wp-dmg">1D10+2</span><span class="wp-skill">冲锋枪 70% · 射程20 · 装弹20/30/50</span></div>
+        </div>
+
+        <!-- 人物细节 + 背景故事（左右二列） -->
+        <div class="dc-detail-row">
+          <!-- 左列：人物细节 -->
+          <div class="dc-detail-left">
+            <div class="dc-info-block dc-quick-info">
+              <div class="qi-item wide"><span class="qi-label">👤</span><span class="qi-val">棕发棕眼，开朗健谈的克里奥尔青年</span></div>
+              <div class="qi-item"><span class="qi-label">💭</span><span class="qi-val">能打交道的就是朋友</span></div>
+              <div class="qi-item"><span class="qi-label">⭐</span><span class="qi-val">长袖善舞，大胆谨慎</span></div>
+              <div class="qi-item"><span class="qi-label">🏪</span><span class="qi-val">四角咖啡馆</span></div>
+              <div class="qi-item"><span class="qi-label">💎</span><span class="qi-val">手枪与护身符袋</span></div>
+            </div>
+            <div class="dc-info-block">
+              <h5>💰 资产</h5>
+              <p class="info-text">一间毗邻密西西比河的咖啡馆「四角咖啡」，暗地里售卖酒水，开张暗语是"湿木头"。顾客主要是黑帮、码头工人，在同行间小有名气。</p>
+            </div>
+            <div class="dc-info-block">
+              <h5>🎒 随身物品</h5>
+              <p class="info-text">怀表 · 腰挎包 · .45"护身符"袋 · 装冲锋枪的班卓琴箱</p>
+              <p class="info-text" style="margin-top:2px;font-size:.7rem;color:#8a7a62;">背包：走私路线图 · 伏都教道具 · 鳄鱼皮钱夹 · 枪弹补给 · 时事报纸</p>
+            </div>
+          </div>
+          <!-- 右列：完整背景故事 -->
+          <div class="dc-detail-right">
+            <div class="dc-info-block">
+              <h5>📜 背景故事</h5>
+              <div class="story-text">
+                <p>杜波伊斯是出生在新奥尔良九区的克里奥尔人，最早的杜波伊斯是法国海盗，在经历了波澜壮阔的流亡后，最终决定定居美洲，而他父亲、美洲生美洲长大的老杜波伊斯对这里美丽的黑珍珠一见钟情，留在了新奥尔良。综合说来，走私是他家的祖传产业，在这样氛围中耳濡目染长大的小杜波伊斯长袖善舞，很早就学会了和形形色色的人打交道，也是因此抓住了禁酒令的机遇，一跃成为当地有名的私酒贩子。</p>
+                <p>杜波伊斯经营着一家名为"四角咖啡"的咖啡馆，暗地里售卖酒水，开张暗语是"湿木头"。他的顾客中常有腐败的白人警察、黑人码头工、以及各色街头成员，身处消息流动迅速的密西西比河沿岸这一优势令他结交了众多相关人脉，在这些人口中，他被称作"卖木头的跛子"。</p>
+                <p>他的脚伤是因为童年时期的一次意外。</p>
+                <p>杜波伊斯家中并无人信仰伏都教，事实上，他们什么都信，遇到人生抉择的重要转折时则什么神都不信，不过因人种的特殊性，他乐于扮演一个狂信者：将枪套上刺图腾符号并自称护身符袋、将汤普森冲锋枪装进班卓琴箱、利用各种仪式吓唬对手都是巧妙的手段，作为特殊职业从事者，他有极高的自保需求，大胆且谨慎是他的人生信条。</p>
+                <p>杜波伊斯和埃特尼是大学相识，因着老乡的关系，他应邀加入了对方所在的神秘学书友会，并因此与其他人结下深厚友谊。</p>
+              </div>
+            </div>
+            <div class="dc-quote">
+              <p class="quote-text">走私一直是一个有利可图的高风险行当。走私者往往有一个合法的表面职业，比如船长、飞行员或商人，以掩盖他们非法运输的行为。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dc-note">仅作展示 · 非下载模板</div>
+      </div>
+
+      <!-- 调查员 ② 林奇·凯利 -->
+      <div class="dossier-card">
+        <!-- 姓名标牌 -->
+        <div class="dc-badge">
+          <div class="avatar-placeholder">🃏</div>
+          <div class="badge-info">
+            <div class="dc-name">
+              林奇·凯利
+              <span class="dc-tag">巫师 · 开锁匠</span>
+            </div>
+            <div class="dc-sub">
+              <span>🧑‍🦰 男 · 28岁</span>
+              <span>📅 1920s</span>
+              <span>📍 阿卡姆</span>
+              <span>🎲 格莱德</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 属性 -->
+        <div class="dc-stats">
+          <div class="dc-stat"><span class="s-label">STR</span><div class="s-bar"><div class="s-fill str2"></div></div><span class="s-val">80</span><span class="s-half">40</span></div>
+          <div class="dc-stat"><span class="s-label">DEX</span><div class="s-bar"><div class="s-fill dex2"></div></div><span class="s-val">80</span><span class="s-half">40</span></div>
+          <div class="dc-stat"><span class="s-label">CON</span><div class="s-bar"><div class="s-fill con2"></div></div><span class="s-val">55</span><span class="s-half">27</span></div>
+          <div class="dc-stat"><span class="s-label">APP</span><div class="s-bar"><div class="s-fill app2"></div></div><span class="s-val">40</span><span class="s-half">20</span></div>
+          <div class="dc-stat"><span class="s-label">EDU</span><div class="s-bar"><div class="s-fill edu2"></div></div><span class="s-val">75</span><span class="s-half">37</span></div>
+          <div class="dc-stat"><span class="s-label">SIZ</span><div class="s-bar"><div class="s-fill siz2"></div></div><span class="s-val">65</span><span class="s-half">32</span></div>
+          <div class="dc-stat"><span class="s-label">INT</span><div class="s-bar"><div class="s-fill int2"></div></div><span class="s-val">70</span><span class="s-half">35</span></div>
+          <div class="dc-stat"><span class="s-label">POW</span><div class="s-bar"><div class="s-fill pow2"></div></div><span class="s-val">50</span><span class="s-half">25</span></div>
+        </div>
+
+        <!-- 生命/理智/魔法 -->
+        <div class="dc-vitals">
+          <div class="dc-vital highlight"><span class="v-label">❤️ HP</span><span class="v-val">12</span></div>
+          <div class="dc-vital highlight"><span class="v-label">🧠 SAN</span><span class="v-val">50 <span class="v-sub">/ 84</span></span></div>
+          <div class="dc-vital highlight"><span class="v-label">🔮 MP</span><span class="v-val">10</span></div>
+          <div class="dc-vital"><span class="v-label">🍀 LUCK</span><span class="v-val">60</span></div>
+          <div class="dc-vital"><span class="v-label">🏃 MOV</span><span class="v-val">9</span></div>
+          <div class="dc-vital"><span class="v-label">💥 DB</span><span class="v-val">+1D4</span></div>
+          <div class="dc-vital"><span class="v-label">🛡️ Build</span><span class="v-val">1</span></div>
+        </div>
+
+        <!-- 武装技能 -->
+        <div class="dc-skills">
+          <h5>🎯 职业专精技能</h5>
+          <div class="skill-tags">
+            <span class="skill-tag mast">🔫 步枪/霰弹枪 70%</span>
+            <span class="skill-tag mast">💬 话术 65%</span>
+            <span class="skill-tag mast">🎭 技艺(表演) 55%</span>
+            <span class="skill-tag mast">💰 估价 50%</span>
+            <span class="skill-tag mast">🔍 侦查 60%</span>
+            <span class="skill-tag mast">🔮 神秘学 55%</span>
+            <span class="skill-tag mast">🔧 锁匠 41%</span>
+            <span class="skill-tag own">📐 数学 40%</span>
+            <span class="skill-tag own">🦎 追踪 45%</span>
+            <span class="skill-tag own">🏃 闪避 50%</span>
+            <span class="skill-tag own">👻 克苏鲁 15%</span>
+            <span class="skill-tag own">💵 信用评级 50%</span>
+            <span class="skill-tag own">🛡️ 斗殴 25%</span>
+            <span class="skill-tag own">🤲 妙手 10%</span>
+            <span class="skill-tag own">👂 聆听 20%</span>
+          </div>
+        </div>
+
+        <!-- 装备武器 -->
+        <div class="dc-weapons">
+          <h5>🔪 装备武器</h5>
+          <div class="dc-weapon-row"><span class="wp-name">👊 肉搏</span><span class="wp-dmg">1D3+1D4</span><span class="wp-skill">斗殴 25%</span></div>
+          <div class="dc-weapon-row"><span class="wp-name">🔫 "护身符" · 猎象枪</span><span class="wp-dmg">3D6+4</span><span class="wp-skill">步霰 70% · 射程100 · 装弹2</span></div>
+        </div>
+
+        <!-- 人物细节 + 背景故事 -->
+        <div class="dc-detail-row">
+          <div class="dc-detail-left">
+            <div class="dc-info-block dc-quick-info">
+              <div class="qi-item wide"><span class="qi-label">👤</span><span class="qi-val">黑发绿眼，伤疤毁容的温柔青年，偶尔流露神经质</span></div>
+              <div class="qi-item"><span class="qi-label">💭</span><span class="qi-val">笃信因果，对魔法抱有歇斯底里的狂热</span></div>
+              <div class="qi-item"><span class="qi-label">⭐</span><span class="qi-val">赌徒——在惊险的生活中乐此不疲</span></div>
+              <div class="qi-item"><span class="qi-label">🏪</span><span class="qi-val">燃烧的凯利宅</span></div>
+              <div class="qi-item"><span class="qi-label">💎</span><span class="qi-val">无</span></div>
+            </div>
+            <div class="dc-info-block">
+              <h5>💰 资产</h5>
+              <p class="info-text">小康 · 消费50 · 其他资产2.5万 · 现金250美元</p>
+            </div>
+            <div class="dc-info-block">
+              <h5>🎒 随身物品</h5>
+              <p class="info-text">处方海洛因 · 香烟 · 打火机 · 薄荷糖 · 闪灵吊坠 · 腰包</p>
+              <p class="info-text" style="margin-top:2px;font-size:.7rem;color:#8a7a62;">背包：撬锁工具 · 剥皮刀 · 歌剧剧本 · 安眠药 · 破窗笔 · 宝石指南针</p>
+            </div>
+          </div>
+          <div class="dc-detail-right">
+            <div class="dc-info-block">
+              <h5>📜 背景故事</h5>
+              <div class="story-text">
+                <p>臭名昭著的魔术师骗子爱德华·凯利的后代，引起后世诸多动荡的《蠕虫的秘密》英译初稿正在林奇的家中。不是每一代凯利都有成为投机者的想法，在过去，《蠕虫的秘密》只是躺在藏书堆里平平无奇的一本传奇传记，然而，随着家境肉眼可见的没落，怀着对未来的"前瞻性十足"的忧患意识，野心勃勃的老凯利认定这份"宝物"能帮助凯利家在他这代从中产家庭完成阶级跃升。为此，他安排林奇进入密大的数学院就读，希望他能为他们解读并研发出书中所提到的关于超越时空之旅的药物、辽丹的配方。</p>
+                <p>相较于同门的师弟沃尔特·吉尔曼来说，林奇并不是一个天赋异禀的研究者或者敏感纤细的艺术家。他的成绩在密斯卡托尼克大学并不十分出类拔萃，然而几乎每个教授都喜欢他：因为他是个不麻烦的聪明人。林奇擅长各类文书工作和组织管理，对交代的每一件事都能完成地滴水不漏、井井有条。他是学生参议院 28 名代表中的首席、美术部门舞台剧的常驻演员，英俊的外表令他收获过亲密无间的友谊和情投意合开场却惨淡分手的爱情。</p>
+                <p>尽管大学期间的林奇已经竭尽所能去破译秘辛，但辽丹毕竟不是寻常之物。在密大林林总总听了太多关于它的传说后，林奇已经对达成老爹不切实际的幻想完全不抱希望了，"或许密大的故事波澜壮阔而充满传奇，但这毕竟与他无关"，这样想着的林奇，或许忘记了导师海勒姆·厄帕姆博士曾对他说出过的一句谶言——一切因果冥冥中都有纠缠，神秘总会被与它相关的人所吸引。</p>
+                <p>研究生毕业后，林奇返回了多年不曾回去的金斯波特家中，却只看见了熊熊燃烧的家宅和呼啸的救护车闪灯。《蠕虫的秘密》不知所踪，母亲确认死亡，脖颈上有横切的刀口，父亲不见踪影，住在郊外的爷爷奶奶同样失踪。由于时间不巧，事后搜查也没能找到更多线索，报仇无门的情况下，林奇大受刺激，认定万能的魔法可以实现一切愿望，诅咒、复活、又或者⋯⋯超越时空之旅。</p>
+                <p>之后一段时间，林奇追随《蠕虫》留下的知识和线索加入了群星智慧教团，以假名凯文·林奇的身份行动。他曾怀抱狂热，但并不甘心事事落于祭司身后，加入后的第二年，他从背后捅杀了当时教团新秀斯派克·斯托森，剥下对方脸皮、使用死亡面具术顶替其生活。之后一年，林奇几乎了解过了所有以对方目前水平能接触到的秘典。</p>
+                <p>家破人亡的第三年，在马萨诸塞州阿卡姆的星空智慧教团与密大交锋时，林奇重新见到了他大学时期的导师，并没有犹豫，林奇叛逃离开，用教团的信息投桃报李。他本想加入密大，然而昔日的导师和同学对他的现状怀抱警惕。林奇气愤之下，试图用刀剥离人皮面具以验明身份，不料并未成功，还伤到了自己本来的面容。自知得不到庇护后，林奇就此离开，辗转在阿卡姆地区的巫师黑市为人进行秘密换脸业务，并利用攒下的钱财开了一家锁匠铺，隐匿在人群中。</p>
+                <p>黑市期间，林奇将斯派克的人皮面具取下，重新使用回自己的脸。密大方面就他的情况进行了相当时长的讨论，直到他在黑市活跃的消息被传入校内，校方终于下定决心拍板：为了不让林奇再一次误入歧途，海勒姆·厄帕姆博士作为代表，向他推荐了这个最近声名鹊起的侦探社。</p>
+              </div>
+            </div>
+            <div class="dc-quote">
+              <p class="quote-text">一切因果冥冥中都有纠缠，神秘总会被与它相关的人所吸引。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dc-note">仅作展示 · 非下载模板</div>
+      </div>
+
+      <!-- 调查员 ③ 陈有福 -->
+      <div class="dossier-card">
+        <div class="dc-badge">
+          <div class="avatar-placeholder">💻</div>
+          <div class="badge-info">
+            <div class="dc-name">
+              陈有福
+              <span class="dc-tag">网络自由职业者</span>
+            </div>
+            <div class="dc-sub">
+              <span>🧑‍🦰 男 · 26岁</span>
+              <span>📅 2023</span>
+              <span>📍 湖北</span>
+              <span>🎲 格莱德</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dc-stats">
+          <div class="dc-stat"><span class="s-label">STR</span><div class="s-bar"><div class="s-fill str3"></div></div><span class="s-val">40</span><span class="s-half">20</span></div>
+          <div class="dc-stat"><span class="s-label">DEX</span><div class="s-bar"><div class="s-fill dex3"></div></div><span class="s-val">60</span><span class="s-half">30</span></div>
+          <div class="dc-stat"><span class="s-label">CON</span><div class="s-bar"><div class="s-fill con3"></div></div><span class="s-val">85</span><span class="s-half">42</span></div>
+          <div class="dc-stat"><span class="s-label">APP</span><div class="s-bar"><div class="s-fill app3"></div></div><span class="s-val">60</span><span class="s-half">30</span></div>
+          <div class="dc-stat"><span class="s-label">EDU</span><div class="s-bar"><div class="s-fill edu3"></div></div><span class="s-val">70</span><span class="s-half">35</span></div>
+          <div class="dc-stat"><span class="s-label">SIZ</span><div class="s-bar"><div class="s-fill siz3"></div></div><span class="s-val">65</span><span class="s-half">32</span></div>
+          <div class="dc-stat"><span class="s-label">INT</span><div class="s-bar"><div class="s-fill int3"></div></div><span class="s-val">65</span><span class="s-half">32</span></div>
+          <div class="dc-stat"><span class="s-label">POW</span><div class="s-bar"><div class="s-fill pow3"></div></div><span class="s-val">80</span><span class="s-half">40</span></div>
+        </div>
+
+        <div class="dc-vitals">
+          <div class="dc-vital highlight"><span class="v-label">❤️ HP</span><span class="v-val">15</span></div>
+          <div class="dc-vital highlight"><span class="v-label">🧠 SAN</span><span class="v-val">80 <span class="v-sub">/ 99</span></span></div>
+          <div class="dc-vital highlight"><span class="v-label">🔮 MP</span><span class="v-val">16</span></div>
+          <div class="dc-vital"><span class="v-label">🍀 LUCK</span><span class="v-val">70</span></div>
+          <div class="dc-vital"><span class="v-label">🏃 MOV</span><span class="v-val">7</span></div>
+          <div class="dc-vital"><span class="v-label">💥 DB</span><span class="v-val">0</span></div>
+          <div class="dc-vital"><span class="v-label">🛡️ Build</span><span class="v-val">0</span></div>
+        </div>
+
+        <div class="dc-skills">
+          <h5>🎯 职业专精技能</h5>
+          <div class="skill-tags">
+            <span class="skill-tag mast">💻 计算机 60%</span>
+            <span class="skill-tag mast">🔍 侦查 70%</span>
+            <span class="skill-tag mast">📖 图书馆 60%</span>
+            <span class="skill-tag mast">💬 话术 65%</span>
+            <span class="skill-tag mast">⚡ 电子学 46%</span>
+            <span class="skill-tag mast">🔧 电气维修 40%</span>
+            <span class="skill-tag own">🔩 机械维修 45%</span>
+            <span class="skill-tag own">🧭 导航 50%</span>
+            <span class="skill-tag own">🚗 汽车驾驶 50%</span>
+            <span class="skill-tag own">🛡️ 斗殴 45%</span>
+            <span class="skill-tag own">🏃 闪避 30%</span>
+            <span class="skill-tag own">💵 信用评级 10%</span>
+          </div>
+        </div>
+
+        <div class="dc-weapons">
+          <h5>🔪 装备武器</h5>
+          <div class="dc-weapon-row"><span class="wp-name">👊 肉搏</span><span class="wp-dmg">1D3</span><span class="wp-skill">斗殴 45%</span></div>
+          <div class="dc-weapon-row"><span class="wp-name">⚡ 强光警用电棍</span><span class="wp-dmg">1D3+眩晕</span><span class="wp-skill">斗殴 45% · 接触</span></div>
+        </div>
+
+        <div class="dc-detail-row">
+          <div class="dc-detail-left">
+            <div class="dc-info-block dc-quick-info">
+              <div class="qi-item wide"><span class="qi-label">👤</span><span class="qi-val">黑发黑眼，戴眼镜的颓废青年</span></div>
+              <div class="qi-item"><span class="qi-label">💭</span><span class="qi-val">得混且混</span></div>
+              <div class="qi-item"><span class="qi-label">⭐</span><span class="qi-val">聪明怕苦，道德感不高不低</span></div>
+              <div class="qi-item"><span class="qi-label">🏪</span><span class="qi-val">牢房——再也不想回去了</span></div>
+              <div class="qi-item"><span class="qi-label">💎</span><span class="qi-val">每周开奖前的双色球票</span></div>
+            </div>
+            <div class="dc-info-block">
+              <h5>💰 资产</h5>
+              <p class="info-text">标准 · 消费10 · 其他资产500 · 现金20美元</p>
+            </div>
+            <div class="dc-info-block">
+              <h5>🎒 随身物品</h5>
+              <p class="info-text">家门钥匙 · 钱包 · 维修工具 · 假SIM卡 · 藏警棍的吉他包</p>
+            </div>
+          </div>
+          <div class="dc-detail-right">
+            <div class="dc-info-block">
+              <h5>📜 背景故事</h5>
+              <div class="story-text">
+                <p>陈有福出生于湖北孝感农村，是家中第二子。华科计算机系毕业，在光谷工作半年后迷上赌博，债台高筑。为还清债务动了歪心思，租用境外服务器搭建涩情网站，通过投放广告和垃圾短信引流收割会员费。尝到甜头的他辞去工作，回老家专职运营，将资金一半用来博彩，一半拉客拓展业务，很快成了集盗版和擦边球为一体的毒瘤。</p>
+                <p>1999年8月，准备出村采购的他接到报信说条子正在隔壁村抓人。自知违法的一身冷汗的陈有福带上U盘、假证、钱包、银行卡和帽子平光眼镜，化名张文行，辗转宁波广州多地，开始了长达四个月的逃亡生活。</p>
+                <p>12月4日，因挂念家中老人拨打了对方电话，这一异常来电被警方锁定IP。7月5日凌晨，陈有福在上海虹桥站被联合警方抓捕归案，获刑两年。</p>
+                <p>模组开始：服刑数月的陈联合狱友潜逃，顺走了一把狱警的电击棍。</p>
+              </div>
+            </div>
+            <div class="dc-quote">
+              <p class="quote-text">我不是坏人，也不是好人——我只是个懒得选边站的人。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dc-note">仅作展示 · 非下载模板</div>
+      </div>
+
+      <!-- 调查员 ④ 檀和辉 -->
+      <div class="dossier-card">
+        <div class="dc-badge">
+          <div class="avatar-placeholder">🧭</div>
+          <div class="badge-info">
+            <div class="dc-name">
+              檀和辉
+              <span class="dc-tag">职业探险家</span>
+            </div>
+            <div class="dc-sub">
+              <span>🧑‍🦰 男 · 32岁</span>
+              <span>📅 现代</span>
+              <span>📍 东京</span>
+              <span>🎲 格莱德</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dc-stats">
+          <div class="dc-stat"><span class="s-label">STR</span><div class="s-bar"><div class="s-fill str4"></div></div><span class="s-val">75</span><span class="s-half">37</span></div>
+          <div class="dc-stat"><span class="s-label">DEX</span><div class="s-bar"><div class="s-fill dex4"></div></div><span class="s-val">60</span><span class="s-half">30</span></div>
+          <div class="dc-stat"><span class="s-label">CON</span><div class="s-bar"><div class="s-fill con4"></div></div><span class="s-val">65</span><span class="s-half">32</span></div>
+          <div class="dc-stat"><span class="s-label">APP</span><div class="s-bar"><div class="s-fill app4"></div></div><span class="s-val">65</span><span class="s-half">32</span></div>
+          <div class="dc-stat"><span class="s-label">EDU</span><div class="s-bar"><div class="s-fill edu4"></div></div><span class="s-val">70</span><span class="s-half">35</span></div>
+          <div class="dc-stat"><span class="s-label">SIZ</span><div class="s-bar"><div class="s-fill siz4"></div></div><span class="s-val">70</span><span class="s-half">35</span></div>
+          <div class="dc-stat"><span class="s-label">INT</span><div class="s-bar"><div class="s-fill int4"></div></div><span class="s-val">75</span><span class="s-half">37</span></div>
+          <div class="dc-stat"><span class="s-label">POW</span><div class="s-bar"><div class="s-fill pow4"></div></div><span class="s-val">85</span><span class="s-half">42</span></div>
+        </div>
+
+        <div class="dc-vitals">
+          <div class="dc-vital highlight"><span class="v-label">❤️ HP</span><span class="v-val">13</span></div>
+          <div class="dc-vital highlight"><span class="v-label">🧠 SAN</span><span class="v-val">85 <span class="v-sub">/ 99</span></span></div>
+          <div class="dc-vital highlight"><span class="v-label">🔮 MP</span><span class="v-val">17</span></div>
+          <div class="dc-vital"><span class="v-label">🍀 LUCK</span><span class="v-val">45</span></div>
+          <div class="dc-vital"><span class="v-label">🏃 MOV</span><span class="v-val">8</span></div>
+          <div class="dc-vital"><span class="v-label">💥 DB</span><span class="v-val">+1D4</span></div>
+          <div class="dc-vital"><span class="v-label">🛡️ Build</span><span class="v-val">1</span></div>
+        </div>
+
+        <div class="dc-skills">
+          <h5>🎯 职业专精技能</h5>
+          <div class="skill-tags">
+            <span class="skill-tag mast">🧗 攀爬 75%</span>
+            <span class="skill-tag mast">🧭 导航 70%</span>
+            <span class="skill-tag mast">💵 信用评级 60%</span>
+            <span class="skill-tag mast">🔍 侦查 60%</span>
+            <span class="skill-tag mast">🧠 心理学 60%</span>
+            <span class="skill-tag mast">📖 图书馆 60%</span>
+            <span class="skill-tag mast">👂 聆听 60%</span>
+            <span class="skill-tag own">🏃 闪避 60%</span>
+            <span class="skill-tag own">🗣️ 英语 51%</span>
+            <span class="skill-tag own">🛡️ 斗殴 45%</span>
+            <span class="skill-tag own">🌿 博物学 10%</span>
+            <span class="skill-tag own">🏕️ 生存 10%</span>
+          </div>
+        </div>
+
+        <div class="dc-weapons">
+          <h5>🔪 装备武器</h5>
+          <div class="dc-weapon-row"><span class="wp-name">👊 肉搏</span><span class="wp-dmg">1D3+1D4</span><span class="wp-skill">斗殴 45%</span></div>
+        </div>
+
+        <div class="dc-detail-row">
+          <div class="dc-detail-left">
+            <div class="dc-info-block dc-quick-info">
+              <div class="qi-item wide"><span class="qi-label">👤</span><span class="qi-val">黑发绿眼，散漫无羁的富家少爷，180cm</span></div>
+              <div class="qi-item"><span class="qi-label">💭</span><span class="qi-val">及时行乐，防人之心不可无</span></div>
+              <div class="qi-item"><span class="qi-label">⭐</span><span class="qi-val">通透冷静，做事有条理，未雨绸缪</span></div>
+              <div class="qi-item"><span class="qi-label">🏪</span><span class="qi-val">没有</span></div>
+              <div class="qi-item"><span class="qi-label">💎</span><span class="qi-val">檀木手镯——对母亲的最后眷恋</span></div>
+            </div>
+            <div class="dc-info-block">
+              <h5>💰 资产</h5>
+              <p class="info-text">小康 · 消费50 · 其他资产3万 · 现金300美元。东京市郊别墅，有管家、司机、女仆，出行高档车。</p>
+            </div>
+            <div class="dc-info-block">
+              <h5>🎒 随身物品</h5>
+              <p class="info-text">雪茄剪 · 防风雪茄打火枪 · 多功能钥匙刀 · 强光手电 · 指南针 · 镁粉 · 大量现金</p>
+              <p class="info-text" style="margin-top:2px;font-size:.7rem;color:#8a7a62;">旅行箱：滑雪全套设备 · 水与干粮 · 近几日报纸</p>
+            </div>
+          </div>
+          <div class="dc-detail-right">
+            <div class="dc-info-block">
+              <h5>📜 背景故事</h5>
+              <div class="story-text">
+                <p>日英混血，父亲是前来日本投资发展的大老板，母亲是本地财阀的小女儿。和辉是这场商业联姻的第四子，但与兄弟们并不亲密。因继任权靠后的缘故，早早就放弃与兄弟们勾心斗角竞争，转而发展其个人兴趣，成了一名职业探险家。</p>
+                <p>天性自由散漫，从小接受西式教育，虽是大户人家出身却并非拘于礼节等细枝末节的人，是圈子里出名的随性人士，大多数时候都是懒洋洋好脾气的样子。好奇心强，喜欢推理小说，是福尔摩斯的忠实粉丝，模仿福尔摩斯学了杂七杂八众多零碎知识，有保持随时观察身边人并推理先前做过什么事的热忱，乐此不疲。</p>
+                <p>曾因贴身女仆家庭突遭变故贪念檀家巨额财产而险些被绑架，虽及时解决祸端却因此留下了深刻教训，此后并不会对身边人全然放心，唯一全心信任的只有陪伴32年之久的管家。</p>
+                <p>是个雪茄客。本次滑雪场之旅的邀请人。</p>
+              </div>
+            </div>
+            <div class="dc-quote">
+              <p class="quote-text">未知是这个世界留给探险家的第一张请柬。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dc-note">仅作展示 · 非下载模板</div>
+      </div>
+
+      <!-- 调查员 ⑤ 德川凛 -->
+      <div class="dossier-card">
+        <div class="dc-badge">
+          <div class="avatar-placeholder">🎀</div>
+          <div class="badge-info">
+            <div class="dc-name">
+              德川凛
+              <span class="dc-tag">大学生</span>
+            </div>
+            <div class="dc-sub">
+              <span>👩 女 · 19岁</span>
+              <span>📅 2019</span>
+              <span>📍 东京</span>
+              <span>🎲 格莱德</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dc-stats">
+          <div class="dc-stat"><span class="s-label">STR</span><div class="s-bar"><div class="s-fill str5"></div></div><span class="s-val">45</span><span class="s-half">22</span></div>
+          <div class="dc-stat"><span class="s-label">DEX</span><div class="s-bar"><div class="s-fill dex5"></div></div><span class="s-val">70</span><span class="s-half">35</span></div>
+          <div class="dc-stat"><span class="s-label">CON</span><div class="s-bar"><div class="s-fill con5"></div></div><span class="s-val">50</span><span class="s-half">25</span></div>
+          <div class="dc-stat"><span class="s-label">APP</span><div class="s-bar"><div class="s-fill app5"></div></div><span class="s-val">65</span><span class="s-half">32</span></div>
+          <div class="dc-stat"><span class="s-label">EDU</span><div class="s-bar"><div class="s-fill edu5"></div></div><span class="s-val">70</span><span class="s-half">35</span></div>
+          <div class="dc-stat"><span class="s-label">SIZ</span><div class="s-bar"><div class="s-fill siz5"></div></div><span class="s-val">45</span><span class="s-half">22</span></div>
+          <div class="dc-stat"><span class="s-label">INT</span><div class="s-bar"><div class="s-fill int5"></div></div><span class="s-val">80</span><span class="s-half">40</span></div>
+          <div class="dc-stat"><span class="s-label">POW</span><div class="s-bar"><div class="s-fill pow5"></div></div><span class="s-val">55</span><span class="s-half">27</span></div>
+        </div>
+
+        <div class="dc-vitals">
+          <div class="dc-vital highlight"><span class="v-label">❤️ HP</span><span class="v-val">9</span></div>
+          <div class="dc-vital highlight"><span class="v-label">🧠 SAN</span><span class="v-val">61 <span class="v-sub">/ 99</span></span></div>
+          <div class="dc-vital highlight"><span class="v-label">🔮 MP</span><span class="v-val">11</span></div>
+          <div class="dc-vital"><span class="v-label">🍀 LUCK</span><span class="v-val">60</span></div>
+          <div class="dc-vital"><span class="v-label">🏃 MOV</span><span class="v-val">8</span></div>
+          <div class="dc-vital"><span class="v-label">💥 DB</span><span class="v-val">0</span></div>
+          <div class="dc-vital"><span class="v-label">🛡️ Build</span><span class="v-val">0</span></div>
+        </div>
+
+        <div class="dc-skills">
+          <h5>🎯 专业方向</h5>
+          <div class="skill-tags">
+            <span class="skill-tag mast">🏥 医学 79%</span>
+            <span class="skill-tag mast">🧠 心理学 70%</span>
+            <span class="skill-tag mast">🔮 神秘学 65%</span>
+            <span class="skill-tag mast">🏃 闪避 60%</span>
+            <span class="skill-tag mast">📖 图书馆 59%</span>
+            <span class="skill-tag mast">👀 侦查 55%</span>
+            <span class="skill-tag own">👂 聆听 50%</span>
+            <span class="skill-tag own">💬 话术 50%</span>
+            <span class="skill-tag own">🩹 急救 70%</span>
+            <span class="skill-tag own">👣 潜行 70%</span>
+            <span class="skill-tag own">🎌 日语 70%</span>
+          </div>
+        </div>
+
+        <div class="dc-weapons">
+          <h5>🔪 装备武器</h5>
+          <div class="dc-weapon-row"><span class="wp-name">👊 肉搏</span><span class="wp-dmg">1D3</span><span class="wp-skill">斗殴 25%</span></div>
+        </div>
+
+        <div class="dc-detail-row">
+          <div class="dc-detail-left">
+            <div class="dc-info-block dc-quick-info">
+              <div class="qi-item wide"><span class="qi-label">👤</span><span class="qi-val">娃娃脸，身材娇小的丧气系女大</span></div>
+              <div class="qi-item"><span class="qi-label">💭</span><span class="qi-val">科学的尽头是神秘学</span></div>
+              <div class="qi-item"><span class="qi-label">⭐</span><span class="qi-val">好奇心与社交力忽上忽下</span></div>
+              <div class="qi-item"><span class="qi-label">🏪</span><span class="qi-val">无</span></div>
+              <div class="qi-item"><span class="qi-label">💎</span><span class="qi-val">无</span></div>
+            </div>
+            <div class="dc-info-block">
+              <h5>💰 资产</h5>
+              <p class="info-text">贫穷 · 消费40 · 其他资产1000 · 现金100美元。生活费靠周末打工。</p>
+            </div>
+            <div class="dc-info-block">
+              <h5>🎒 随身物品</h5>
+              <p class="info-text">发卡 · 防狼喷雾 · 玉髓手链 · 药箱（创口贴、常见药）</p>
+              <p class="info-text" style="margin-top:2px;font-size:.7rem;color:#8a7a62;">旅行箱：一天换洗衣物 · 巧克力面包和矿泉水</p>
+            </div>
+          </div>
+          <div class="dc-detail-right">
+            <div class="dc-info-block">
+              <h5>📜 背景故事</h5>
+              <div class="story-text">
+                <p>被父母寄予厚望的德川家后人——其实是旁支中的旁支，家境普通且正常，生活费来源是周末打工，和历史上著名的那位大人关联性约等于0。目前就读于东京某医科大的麻醉科，本着能踩点绝不早到的态度，日常作为绝赞丧气系躺平咸鱼女大活跃中。</p>
+                <p>社交能力无障碍，在学校中也是能和陌生人一周内打成一片的平稳型女大。爱好是志怪类和当下最流行的爱情推理小说。接受能力良好，好奇心旺盛，似乎处于迟来的叛逆期中。因为被摁头学习背书期末周实在太无聊，对非日常存在一种叶公好龙式的期待。</p>
+                <p>即使没有狂热的爱好，但买书的钱也是钱，好不容易中一次奖不去太亏——抱着这样的心态抽到秋叶夏树的邀请函后没多想就来了。</p>
+                <p>经历模组：逃离糖果共和国、薄夜茫茫。在薄夜茫茫中被御殿场复活后的许愿中，她许愿重回2019年一切还没发生时，带着记忆重头来过。</p>
+              </div>
+            </div>
+            <div class="dc-quote">
+              <p class="quote-text">邪神总比期末周有意思。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dc-note">仅作展示 · 非下载模板</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Dice -->
+  <div class="panel" id="panel-dice">
+    <div class="panel-title">Dice · 骰子罗宾猫</div>
+
+    <!-- 介绍 -->
+    <div class="card" style="text-align:center;">
+      <img src="/assets/robincat-avatar.jpg" alt="罗宾猫头像" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #e4d8c0;margin-bottom:.8rem;">
+      <h3>🐱 骰子罗宾猫</h3>
+      <div class="desc">
+        <p>稻草人团《卡森德拉的黑色嘉年华》PC 罗宾的猫拟同人骰。</p>
+        <p style="margin-top:.5rem;color:#8a7a62;font-size:.85rem;">罗宾不同账号同群数据互通</p>
+      </div>
+      <a href="/fox/robincat-card.html" style="display:inline-block;margin-top:.6rem;padding:.3rem 1rem;background:linear-gradient(135deg,#6b7b3c,#4a5a2a);color:#f5efe0;border-radius:20px;font-size:.82rem;font-weight:600;text-decoration:none;">
+        📇 查看横版名片 →
+      </a>
+    </div>
+
+    <!-- 账号信息 -->
+    <div class="card">
+      <h3>📡 接入方式</h3>
+      <div class="desc" style="line-height:2.2;">
+        <p><strong>一号机（QQ）：</strong> 1069635418<br>
+        <span style="color:#ab9c82;font-size:.8rem;">— 暂时由于风控停运</span></p>
+        <p><strong>二号机（QQ）：</strong> 1964404919</p>
+        <p><strong>三号机（QQ）：</strong> 2032579709</p>
+        <p><strong>QQ 官方机器人：</strong> 还在等待过申请</p>
+        <p><strong>KOOK 平台：</strong><br>
+        <a href="https://www.kookapp.cn/app/oauth2/authorize?id=15727&permissions=0&client_id=5G5j2u3uP8zwyykF&redirect_uri=&scope=bot" target="_blank" style="color:#6b7b3c;word-break:break-all;">点击邀请罗宾猫至 KOOK 服务器 ↗</a></p>
+      </div>
+    </div>
+
+    <!-- 作者 -->
+    <div class="card" style="text-align:center;">
+      <div class="desc">
+        <p>📩 作者联系方式：<strong>3207655060</strong></p>
+      </div>
+    </div>
+
+    <!-- 使用手册 -->
+    <div class="card" style="border:2px solid #6b7b3c;">
+      <h3>📖 使用手册</h3>
+      <div class="desc" style="line-height:2;">
+        <p style="margin-bottom:.8rem;">罗宾猫基于 <strong>SealDice（海豹骰）</strong> 核心运行，支持以下常用指令：</p>
+
+        <div style="background:#ede3d0;border-radius:10px;padding:.8rem 1rem;margin:.5rem 0;">
+          <p style="font-weight:700;color:#4a5a2a;">🎲 基础骰点</p>
+          <p><code>.r</code> — 进行一次检定<br>
+          <code>.r d100</code> — 投掷 100 面骰<br>
+          <code>.r 3d6</code> — 投掷 3 颗 6 面骰<br>
+          <code>.r 3d6k1</code> — 投掷并取最高值<br>
+          <code>.r d100 侦查</code> — 带技能名称的检定</p>
+        </div>
+
+        <div style="background:#ede3d0;border-radius:10px;padding:.8rem 1rem;margin:.5rem 0;">
+          <p style="font-weight:700;color:#4a5a2a;">🎯 COC 检定</p>
+          <p><code>.ra 80</code> — 属性/技能检定<br>
+          <code>.ra 80 侦查</code> — 带名称的检定<br>
+          <code>.rh d100</code> — 暗骰（仅自己可见）<br>
+          <code>.rh 70 侦查</code> — 暗骰技能检定</p>
+        </div>
+
+        <div style="background:#ede3d0;border-radius:10px;padding:.8rem 1rem;margin:.5rem 0;">
+          <p style="font-weight:700;color:#4a5a2a;">🧠 理智检定</p>
+          <p><code>.sc 0/1d6</code> — 成功扣 0、失败扣 1d6<br>
+          <code>.sc 1/1d6+1</code> — 成功扣 1、失败扣 1d6+1<br>
+          <code>.sc 1d3/1d6</code> — 成功扣 1d3、失败扣 1d6<br>
+          <code>.sc 1/1d10 san65</code> — 指定当前 SAN 值</p>
+        </div>
+
+        <div style="background:#ede3d0;border-radius:10px;padding:.8rem 1rem;margin:.5rem 0;">
+          <p style="font-weight:700;color:#4a5a2a;">📋 角色卡操作</p>
+          <p><code>.st 力量50 敏捷60 智力70</code> — 设置属性<br>
+          <code>.st show</code> — 查看当前角色卡<br>
+          <code>.st clr</code> — 清空角色卡<br>
+          <code>.tag 技能名 60%</code> — 设置技能</p>
+        </div>
+
+        <div style="background:#ede3d0;border-radius:10px;padding:.8rem 1rem;margin:.5rem 0;">
+          <p style="font-weight:700;color:#4a5a2a;">🔧 其他常用</p>
+          <p><code>.draw 3</code> — 抽牌<br>
+          <code>.draw 塔罗</code> — 抽塔罗牌<br>
+          <code>.coin</code> — 抛硬币<br>
+          <code>.jjc</code> — 进入 / 退出自由骰点模式<br>
+          <code>.help</code> — 查看完整帮助菜单</p>
+        </div>
+
+        <p style="margin-top:.8rem;text-align:center;">
+          📚 更多详细指令请参考<br>
+          <a href="https://docs.sealdice.com/" target="_blank" style="color:#6b7b3c;font-weight:700;">SealDice 官方使用手册 ↗</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导航 -->
+  <div class="panel" id="panel-nav">
+    <div class="panel-title">导航 · TRPG 资源</div>
+    <div class="info-card">
+      <h3>🌐 常用站点</h3>
+      <p>• <a href="https://wiki.cnmods.org" target="_blank" rel="noopener"><strong>魔都TRPG</strong></a> — 中文 COC/TRPG 模组站 · Wiki 文库<br>• <a href="https://www.goddessfantasy.net/bbs/" target="_blank" rel="noopener">纯美苹果园</a> — 华语圈规模最大的 TRPG 论坛<br>• <a href="https://dicecho.io" target="_blank" rel="noopener"><strong>骰声回响</strong></a> — TRPG 骰子与跑团工具平台</p>
+    </div>
+    <div class="info-card">
+      <h3>🎨 制作工具</h3>
+      <p>• 跑团地图生成器<br>• NPC 肖像生成<br>• 音乐 / 氛围音效制作<br>• 战报排版工具</p>
+      <span class="tag">花絮素材</span>
+    </div>
+  </div>
+
+  <!-- 关于 -->
+  <div class="panel" id="panel-about">
+    <div class="panel-title">关于</div>
+    <div class="about-card">
+      <div class="avatar">📝</div>
+      <h2>以猫还猫</h2>
+      <p class="desc">
+        我的个人博客。<br>
+        放一些跑团模组、角色卡、log 记录，<br>
+        以及乱七八糟想放的东西。
+      </p>
+      <div class="contact-row">
+        <a href="mailto:3207655060@qq.com">✉ 3207655060@qq.com</a>
+        <a href="#">📱 以猫还猫</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PASSWORD MODAL ===== -->
+<div class="pw-overlay" id="pwOverlay">
+  <div class="pw-box">
+    <h3>🔒 需要密码</h3>
+    <p>输入密码以下载模组文件</p>
+    <input type="password" id="pwInput" placeholder="请输入密码" autocomplete="off">
+    <div class="pw-err" id="pwErr">❌ 密码错误，请重试</div>
+    <div class="pw-row">
+      <button class="pw-btn no" id="pwCancel">取消</button>
+      <button class="pw-btn ok" id="pwConfirm">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>© 2026 · 以猫还猫 · 个人博客</p>
+  <p style="margin-top:.3rem;">Made with ❤️ — 复古抹茶色小站</p>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  /* --- Entry Gate (全页密码) --- */
+  (function(){
+    const GATE_PW = 'GLIDE';
+    const overlay = document.getElementById('gateOverlay');
+    const input = document.getElementById('gateInput');
+    const btn = document.getElementById('gateBtn');
+    const err = document.getElementById('gateErr');
+
+    if (sessionStorage.getItem('foxgate') === '1') {
+      overlay.classList.add('hidden');
+      return;
+    }
+
+    function tryUnlock(){
+      if (input.value === GATE_PW) {
+        sessionStorage.setItem('foxgate', '1');
+        overlay.classList.add('hidden');
+      } else {
+        err.style.display = 'block';
+        input.value = '';
+        input.focus();
+        setTimeout(function(){err.style.display = 'none'}, 2500);
+      }
+    }
+
+    btn.addEventListener('click', tryUnlock);
+    input.addEventListener('keydown', function(e){
+      if (e.key === 'Enter') tryUnlock();
+    });
+    input.focus();
+  })();
+
+  const menuBtn = document.getElementById('menuBtn');
+  const overlay = document.getElementById('menuOverlay');
+  const panel = document.getElementById('menuPanel');
+
+  function openMenu(){menuBtn.classList.add('open');overlay.classList.add('open');panel.classList.add('open');}
+  function closeMenu(){menuBtn.classList.remove('open');overlay.classList.remove('open');panel.classList.remove('open');}
+
+  menuBtn.addEventListener('click',function(e){e.stopPropagation();if(panel.classList.contains('open'))closeMenu();else openMenu();});
+  overlay.addEventListener('click',closeMenu);
+
+  /* --- Panel switching --- */
+  const pMap={};document.querySelectorAll('.panel').forEach(p=>{pMap[p.id]=p});
+  function showPanel(id){Object.values(pMap).forEach(p=>p.classList.remove('active'));const t=pMap[id];if(t)t.classList.add('active')}
+
+  /* All menu items with data-panel */
+  document.querySelectorAll('[data-panel]').forEach(btn=>{
+    btn.addEventListener('click',function(){const pid=this.dataset.panel;if(pid){showPanel(pid);closeMenu()}});
+  });
+
+  /* Accordion toggles */
+  document.querySelectorAll('[data-toggle]').forEach(btn=>{
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      const target=document.getElementById(this.dataset.toggle);
+      if(!target)return;
+      target.classList.toggle('open');
+      const arr=this.querySelector('.arr');
+      if(arr)arr.classList.toggle('open');
+    });
+  });
+
+  /* Keyboard: Escape closes menu */
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&panel.classList.contains('open'))closeMenu()});
+
+  /* --- Password-protected downloads --- */
+  const PASSWORD = "******";
+  let pendingUrl = null;
+  let pendingCard = null;
+
+  function openPwModal(url, card) {
+    pendingUrl = url;
+    pendingCard = card;
+    document.getElementById('pwOverlay').classList.add('open');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwErr').style.display = 'none';
+    document.getElementById('pwInput').focus();
+  }
+  function closePwModal() {
+    document.getElementById('pwOverlay').classList.remove('open');
+    pendingUrl = null;
+    pendingCard = null;
+  }
+  function confirmPw() {
+    const input = document.getElementById('pwInput').value;
+    if (input === PASSWORD) {
+      if (pendingCard) pendingCard.dataset.auth = 'true';
+      closePwModal();
+      if (pendingUrl) { window.open(pendingUrl, '_blank'); pendingUrl = null; pendingCard = null; }
+    } else {
+      document.getElementById('pwErr').style.display = 'block';
+      document.getElementById('pwInput').focus();
+    }
+  }
+
+  document.getElementById('pwConfirm').addEventListener('click', confirmPw);
+  document.getElementById('pwCancel').addEventListener('click', closePwModal);
+  document.getElementById('pwInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') confirmPw();
+    if (e.key === 'Escape') closePwModal();
+  });
+  document.getElementById('pwOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closePwModal();
+  });
+
+  /* Intercept download buttons (skip external ones) */
+  document.querySelectorAll('.dl-btn:not(.dl-btn-ext)').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const card = this.closest('.card');
+      if (card && card.dataset.auth === 'true') { window.open(this.href, '_blank'); return; }
+      openPwModal(this.href, card);
+    });
+  });
+
+  /* External download buttons: no password, just open */
+  document.querySelectorAll('.dl-btn-ext').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.open(this.href, '_blank');
+    });
+  });
+})();
+</script>
+</body>
+</html>

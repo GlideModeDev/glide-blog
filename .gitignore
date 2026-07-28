@@ -1,0 +1,4 @@
+# 仅排除非博客的技能文件
+skills/
+.DS_Store
+Thumbs.db
